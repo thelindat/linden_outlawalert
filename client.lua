@@ -89,21 +89,6 @@ function refreshPlayerWhitelisted()
 	return false
 end
 
-local foundPeds = {}
-function GetAllPeds()
-    local findHandle, foundPed = FindFirstPed()
-    local continueFind = (foundPed and true or false)
-    while continueFind do
-		if GetPedType(foundPed) ~= 28 and not IsEntityDead(foundPed) and not IsPedAPlayer(foundPed) then
-            foundPeds[#foundPeds + 1] = foundPed
-        end
-        continueFind, foundPed = FindNextPed(findHandle)
-    end
-    EndFindPed(findHandle)
-	
-    return foundPeds
-end
-
 function zoneChance(type, playerCoords, street)    
     local zoneMod, zone, zoneid, sendit = 0, GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)), GetZoneAtCoords(playerCoords.x, playerCoords.y, playerCoords.z), false
     -- lower number means a higher chance of the crime being reported, with 1 being 100%, 4 being 25%, etc.
