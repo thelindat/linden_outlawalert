@@ -1,0 +1,191 @@
+*, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    margin: 0;
+    padding: 0;
+}
+
+::selection { background: transparent; } ::-moz-selection { background: transparent; }
+* {overflow: hidden;}
+body,html { width: 100%; height: 80vh; margin-top: 40px;}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+body { font-family: 'Montserrat', sans-serif; color: white; }
+
+#ui { position: relative; width: 100%; height: 100%; overflow-y: scroll;}
+
+.alerts-wrapper {
+    display: none;
+    float: right;
+}
+
+.content {
+    padding: 2% 2% 0% 2%;
+}
+
+.fas {
+    vertical-align: middle;
+    padding-right:8px;
+    margin-bottom:2px;
+}
+#code {
+    letter-spacing: 0.5px;
+    font-size: 0.95em;
+    font-weight: 700;
+    line-height:1.4em;
+    padding:0.4em;
+    padding-top:0.2em;
+    padding-bottom:0.1em;
+    background: rgba(209, 21, 99, 1.0);
+    float: left;
+    border-radius: 5px;
+    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.50);
+}
+
+#marker {
+    float: right;
+    vertical-align:middle;
+    line-height: 1em;
+    padding-top:3px;
+    right:40px;
+    left:auto;
+    top:auto;
+    position: absolute;
+    font-size: 2.2em;
+    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.50);
+}
+
+#alert-name {
+    letter-spacing: 0.2px;
+    font-size: 1.15em;
+    font-weight: 700;
+    margin: 0 0 0 5px;
+    line-height:1.5em;
+    float: left;
+    text-transform: uppercase;
+    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.50);
+}
+
+#alert-info {
+    font-size: 1em;
+    line-height:calc(1.5em + 2px);
+    vertical-align: middle;
+    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.75);
+    margin-top: 20px;
+}
+
+.alerts {
+    width: 350px;
+    height: 77px;
+    color: white;
+}
+
+.alerts.ems {
+    box-shadow: 3px 0px 3px 0px rgba(223, 61, 61, 0.9) inset;
+    background: rgba(173, 38, 38, 0.9);
+}
+
+.alerts.police {
+    box-shadow: -3px 0px 0px 0px rgba(41, 97, 161, 0.9) inset;
+    background: rgba(26, 68, 116, 0.9);
+}
+
+.alerts.admin {
+    box-shadow: -3px 0px 0px 0px red inset;
+}
+
+.alerts.warning {
+    box-shadow: -3px 0px 0px 0px red inset;
+}
+
+.alerts.info {
+    box-shadow: -3px 0px 0px 0px red inset;
+}
+
+.alerts.error {
+    box-shadow: -3px 0px 0px 0px red inset;
+}
+
+.alerts.thefuckisthiscalledfor {
+    box-shadow: -3px 0px 0px 0px red inset;
+}
+
+
+
+
+
+.template, .notification {
+    display: none;
+}
+
+.notif-container {
+    width: 20%; /* was 15% */
+    position: absolute;
+    right: 0px; /* was 15% */
+    display: display-block;
+    flex-flow: row;
+    flex-wrap: wrap;
+    line-height:0px;
+    z-index:500;
+}
+
+.notification {
+    width: 0px;
+    height: 0px;
+    border-radius: 5px;
+    background:rgba(0,0,0,0.7);
+    margin-right: 0px;
+    font: caption;
+    font-size: 0px;
+    font-weight: 700;
+    margin: 0 0 0 350px;
+    opacity:0;
+}
+
+.move {
+    -webkit-transition: all .2s ease-in-out;
+    -moz-transition: all .2s ease-in-out;
+    -ms-transition: all .2s ease-in-out;
+    -o-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+.error {
+    box-shadow: -5px 0px 0px 0px red inset;
+    background: rgba(160, 17, 48, 0.75);
+    color: #fff;
+}
+
+.ems {
+    box-shadow: -3px 0px 0px 0px rgba(182, 47, 47, 0.9) inset;
+    background: rgba(116, 26, 26, 0.9);
+}
+
+.police {
+    box-shadow: -3px 0px 0px 0px rgba(47, 110, 182, 0.9) inset;
+    background: rgba(26, 68, 116, 0.9);
+}
+
+.officer-down {
+    animation: myfirst 5s linear 0s infinite alternate;
+}
+
+@keyframes myfirst {
+    0%   {background-color:rgba(173, 38, 38, 0.9); left:0px; top:0px;}
+    15%  {background-color:rgba(30, 79, 134, 0.9); left:200px; top:200px;}
+    30% {background-color:rgba(173, 38, 38, 0.9); left:0px; top:0px;}
+    45%  {background-color:rgba(30, 79, 134, 0.9); left:200px; top:200px;}
+    60% {background-color:rgba(173, 38, 38, 0.9); left:0px; top:0px;}
+    75%  {background-color:rgba(30, 79, 134, 0.9); left:200px; top:200px;}
+    90% {background-color:rgba(173, 38, 38, 0.9); left:0px; top:0px;}
+    100%  {background-color:rgba(30, 79, 134, 0.9); left:200px; top:200px;}
+  }

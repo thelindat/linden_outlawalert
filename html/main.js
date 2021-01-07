@@ -1,0 +1,58 @@
+$('document').ready(function() {
+    alerts = {};
+
+    $(".notification").fadeIn();
+
+    window.addEventListener('message', function (event) {
+        if (event.data.action == "display") {
+            ShowNotif(event.data);
+        } else if (event.data.action == "log"){
+            $(".notification").hide();
+        }  else {
+            $(".notification").fadeIn();
+        }
+    });
+
+    function ShowNotif(data) {
+        var $notification = CreateNotification(data);
+        $('.notif-container').prepend($notification.animate({width: '350px', height:'68px', 'line-height':'1.5em', fontSize: '12px', margin:'0 0 4px 0', opacity:'1'}));
+        setTimeout(function() {
+            $.when($notification.animate({width: '0px', height:'0px', fontSize: '0px', margin:'0 0 0 350px', opacity:'0'})).done(function() {
+                $notification.remove()
+            });
+        }, data.length != null ? data.length : 4500);
+}
+
+    function CreateNotification(data) {
+        var $notification = $(document.createElement('div'));
+        $notification.addClass('notification').addClass(data.info["style"]);
+        if (data.info["desc"] == undefined) {
+        $notification.html('\
+        <div class="content">\
+        <div id="code">' + data.info["code"] + '</div>\
+        <div id="alert-name">' + data.info["name"] + '</div>\
+        <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
+        <div id="alert-info"><i class="fas fa-globe"></i>' + data.info["loc"] + '</div>\
+        </div>');
+        } else {
+        $notification.html('\
+        <div class="content">\
+        <div id="code">' + data.info["code"] + '</div>\
+        <div id="alert-name">' + data.info["name"] + '</div>\
+        <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
+        <div id="alert-info"><i class="fas fa-info-circle"></i>' + data.info["desc"] + '</br>\
+        <i class="fas fa-globe"></i>' + data.info["loc"] + '</div>\
+        </div>');
+        }       
+
+        $notification.fadeIn();
+        if (data.info["style"] !== undefined) {
+            Object.keys(data.info["style"]).forEach(function(css) {
+                $notification.css(css, data.info["style"][css])
+            });
+        }
+        return $notification;
+    }
+
+});
+
