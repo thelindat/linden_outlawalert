@@ -21,6 +21,11 @@ AddEventHandler("mdt:newCall", function(details, caller, coords, data)
 		end
 	end
 end)
+```  
+### Send a custom alert
+```
+local data = {['code'] = '211', ['name'] = 'Robbery', ['style'] = 'police', ['desc'] = 'Vangelico Jewelry Store', ['netid'] = nil, ['loc'] = coords, ['length'] = '5000', ['caller'] = 'Alarm'}
+TriggerEvent('mdt:newCall', data.name, data.caller, vector3(data.loc.x, data.loc.y, data.loc.z), data)
 ```
 
 
