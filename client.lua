@@ -46,7 +46,7 @@ AddEventHandler('mdt_calls:SendAlert', function(data)
     SetBlipAsShortRange(blipOne, false)
     SetBlipCategory(blipOne, 2)
 
-    Citizen.Wait((data.length / 1000) * 1000) -- default 5000/1000 = 5 seconds until blip falls off
+    Citizen.Wait(data.length)
     RemoveBlip(blipOne)
     local blipTwo = AddBlipForCoord(GetEntityCoords(entId))
 
