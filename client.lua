@@ -46,7 +46,7 @@ AddEventHandler('mdt_calls:SendAlert', function(data)
     SetBlipAsShortRange(blipOne, false)
     SetBlipCategory(blipOne, 2)
 
-    Citizen.Wait(data.length)
+    Citizen.Wait((data.length / 1000) * 1000) -- default 5000/1000 = 5 seconds until blip falls off
     RemoveBlip(blipOne)
     local blipTwo = AddBlipForCoord(GetEntityCoords(entId))
 
@@ -93,14 +93,7 @@ function zoneChance(type, playerCoords, street)
     local zoneMod, zone, zoneid, sendit = 0, GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)), GetZoneAtCoords(playerCoords.x, playerCoords.y, playerCoords.z), false
     -- lower number means a higher chance of the crime being reported, with 1 being 100%, 4 being 25%, etc.
     if debugchance then return true else
-        if (street == "Great Ocean Hwy") then zoneMod = 2
-        elseif (street == "Palomino Fwy") then zoneMod = 2
-        elseif (street == "Del Perro Fwy") then zoneMod = 2
-        elseif (street == "Elysian Fields Fwy") then zoneMod = 2
-        elseif (street == "La Puerta Fwy") then zoneMod = 2
-        elseif (street == "Olympic Fwy") then zoneMod = 2
-        elseif (street == "Senora Fwy") then zoneMod = 2
-        elseif (street == "Los Santos Freeway") then zoneMod = 2 end
+
         if zoneMod == 0 then zoneMod = 3 end
         if type == speeding then zoneMod = zoneMod * 2 end
 
@@ -111,6 +104,14 @@ function zoneChance(type, playerCoords, street)
         elseif zoneScum == 4 then zoneMod = zoneMod * 2
         elseif zoneScum == 5 then zoneMod = zoneMod * 1
         end
+        if (street == "Great Ocean Hwy") then zoneMod = zoneMod / 2
+        elseif (street == "Palomino Fwy") then zoneMod = zoneMod / 2
+        elseif (street == "Del Perro Fwy") then zoneMod = zoneMod / 2
+        elseif (street == "Elysian Fields Fwy") then zoneMod = zoneMod / 2
+        elseif (street == "La Puerta Fwy") then zoneMod = zoneMod / 2
+        elseif (street == "Olympic Fwy") then zoneMod = zoneMod / 2
+        elseif (street == "Senora Fwy") then zoneMod = zoneMod / 2
+        elseif (street == "Los Santos Freeway") then zoneMod = zoneMod / 2 end
         zoneMod = (math.floor(zoneMod + 0.5))
         local hour = GetClockHours()
         if hour >= 21 or hour <= 4 then
