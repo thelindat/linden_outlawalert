@@ -13,20 +13,15 @@
 
 ::selection { background: transparent; } ::-moz-selection { background: transparent; }
 * {overflow: hidden;}
-body,html { width: 100%; height: 80vh; margin-top: 40px;}
+body,html { width: 100%; height: 80vh; margin-top: 46px;}
 
 ::-webkit-scrollbar {
     display: none;
 }
 
-body { font-family: 'Montserrat', sans-serif; color: white; }
+body { font-family: 'Montserrat', sans-serif; color: white; z-index:-1; }
 
-#ui { position: relative; width: 100%; height: 100%; overflow-y: scroll;}
-
-.alerts-wrapper {
-    display: none;
-    float: right;
-}
+#ui { position: relative; width: 100%; height: 100%; overflow-y: scroll; float: right; right: -12px;}
 
 .content {
     padding: 2% 2% 0% 2%;
@@ -83,6 +78,21 @@ body { font-family: 'Montserrat', sans-serif; color: white; }
     margin-top: 20px;
 }
 
+#descbanner {
+    letter-spacing: 0.6px;
+    font-size: 1em;
+    font-weight: 700;
+    line-height:calc(1.5em + 2px);
+    padding:0.4em;
+    padding-top:0.15em;
+    padding-bottom:0.05em;
+    background-image: linear-gradient(180deg, white, rgb(223, 61, 61) 2px, white 3px);
+    border-radius: 4px;
+    box-shadow: 1px 1px 0px 0px rgba(0,0,0,0.5), inset 0px -1px 0px 2px white;
+    color: rgb(26, 68, 116);
+    text-shadow: 0px -3px 3px rgba(255, 255, 255, 0.3);
+}
+
 .alerts {
     width: 350px;
     height: 77px;
@@ -131,11 +141,11 @@ body { font-family: 'Montserrat', sans-serif; color: white; }
     width: 20%; /* was 15% */
     position: absolute;
     right: 0px; /* was 15% */
+    float: right;
     display: display-block;
     flex-flow: row;
     flex-wrap: wrap;
     line-height:0px;
-    z-index:500;
 }
 
 .notification {
