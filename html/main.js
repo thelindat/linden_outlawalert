@@ -27,22 +27,27 @@ $('document').ready(function() {
         var $notification = $(document.createElement('div'));
         $notification.addClass('notification').addClass(data.info["style"]);
         if (data.info["desc"] == undefined) {
-        $notification.html('\
-        <div class="content">\
-        <div id="code">' + data.info["code"] + '</div>\
-        <div id="alert-name">' + data.info["name"] + '</div>\
-        <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
-        <div id="alert-info"><i class="fas fa-globe"></i>' + data.info["loc"] + '</div>\
-        </div>');
+            $notification.html('\
+                <div class="content">\
+                <div id="code">' + data.info["code"] + '</div>\
+                <div id="alert-name">' + data.info["name"] + '</div>\
+                <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
+                <div id="alert-info"><i class="fas fa-globe"></i>' + data.info["loc"] + '</div>\
+                </div>');
         } else {
-        $notification.html('\
-        <div class="content">\
-        <div id="code">' + data.info["code"] + '</div>\
-        <div id="alert-name">' + data.info["name"] + '</div>\
-        <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
-        <div id="alert-info"><i class="fas fa-info-circle"></i>' + data.info["desc"] + '</br>\
-        <i class="fas fa-globe"></i>' + data.info["loc"] + '</div>\
-        </div>');
+            var desc = data.info["desc"];
+            if(!/^[A-Za-z0-9]/.test(desc)) {
+                var right = desc.search("\\]");
+                desc = '<span id="descbanner">' + desc.substring(1, right) + '</span> ' + desc.slice(right+2) + ''
+            }
+            $notification.html('\
+            <div class="content">\
+            <div id="code">' + data.info["code"] + '</div>\
+            <div id="alert-name">' + data.info["name"] + '</div>\
+            <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
+            <div id="alert-info"><i class="fas fa-info-circle"></i>' + desc + '</br>\
+            <i class="fas fa-globe"></i>' + data.info["loc"] + '</div>\
+            </div>');
         }       
 
         $notification.fadeIn();
