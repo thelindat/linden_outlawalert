@@ -1,9 +1,14 @@
 fx_version 'adamant'
 game 'gta5'
 
+server_scripts {
+	'@mysql-async/lib/MySQL.lua',
+	'server.lua',
+}
 
-server_script "server.lua"
-client_script "client.lua"
+
+client_script 'client.lua'
+shared_script 'config.lua'
 
 ui_page {
     'html/alerts.html',
