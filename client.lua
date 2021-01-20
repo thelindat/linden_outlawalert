@@ -137,7 +137,7 @@ end
 
 
 Citizen.CreateThread(function()
-    local sleep = 50
+    local sleep = 100
 	while true do
         Citizen.Wait(0)
         playerPed = PlayerPedId()
@@ -146,21 +146,20 @@ Citizen.CreateThread(function()
             for k, v in pairs(config.timer) do
                 if v > 0 then config.timer[k] = v - 1 end
             end
+            if config.timer['shooting'] == 0 and IsPedArmed(playerPed, 4) then sleep = 20 else sleep = 100 end
 
             if updateStreet == 0 then street = GetStreetNameFromHashKey(GetStreetNameAtCoord(playerCoords.x, playerCoords.y, playerCoords.z)) end
             if updateStreet == 5 then lastStreet = street updateStreet = 0 else updateStreet = updateStreet + 1 end
 
             if not IsPedInAnyVehicle(playerPed, 1) then
-                if config.timer['shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and GetSelectedPedWeapon(playerPed) ~= 911657153 and GetSelectedPedWeapon(playerPed) ~= 1198879012 and GetSelectedPedWeapon(playerPed) ~= 126349499 then
+                if config.timer['shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
                     if zoneChance('shooting', playerCoords, street) then
                         local netid = NetworkGetNetworkIdFromEntity(playerPed)
                         local data = {['code'] = '10-71', ['name'] = 'Discharge of a firearm', ['style'] = 'police', ['desc'] = nil, ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
                         TriggerServerEvent('mdt:newCall', data.name, data.caller, vector3(data.loc.x, data.loc.y, data.loc.z), data)
                         config.timer['shooting'] = config.shooting.success
-                        sleep = 100
                     else
                         config.timer['shooting'] = config.shooting.fail
-                        sleep = 50
                     end
                 end
             elseif IsPedInAnyVehicle(playerPed, 1) and not IsPedInAnyHeli(playerPed) and not IsPedInAnyPlane(playerPed) and not IsPedInAnyTrain(playerPed) and not IsPedInAnyBoat(playerPed) then
@@ -213,8 +212,8 @@ Citizen.CreateThread(function()
 
 
                     if config.timer['shooting'] == 0 then
-                        if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and GetSelectedPedWeapon(playerPed) ~= 911657153 and GetSelectedPedWeapon(playerPed) ~= 1198879012 and GetSelectedPedWeapon(playerPed) ~= 126349499 then    
-                        if zoneChance('shooting', playerCoords, street) then
+                        if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
+                            if zoneChance('shooting', playerCoords, street) then
                                 local netid = NetworkGetNetworkIdFromEntity(vehicle)
                                 local data = {['code'] = '10-71b', ['name'] = 'Drive-by shooting', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
                                 TriggerServerEvent('mdt:newCall', data.name, data.caller, vector3(data.loc.x, data.loc.y, data.loc.z), data)
@@ -222,7 +221,7 @@ Citizen.CreateThread(function()
                                 sleep = 100
                             else
                                 config.timer['shooting'] = config.shooting.fail
-                                sleep = 50
+                                sleep = 100
                             end
                         end
                     end
@@ -232,7 +231,7 @@ Citizen.CreateThread(function()
                             local netid = NetworkGetNetworkIdFromEntity(vehicle)
                             if IsPedInAnyVehicle(playerPed, 1) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
                                 playerCoords = GetEntityCoords(playerPed)
-                                local data = {['code'] = '505', ['name'] = 'Reckless driving', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['desc2'] = ('%s %s'):format('<i class="fas fa-palette"></i>', vehicleColour), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '5000', ['caller'] = 'Local'}
+                                local data = {['code'] = '505', ['name'] = 'Reckless driving', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['desc2'] = ('%s%s'):format('<i class="fas fa-palette"></i>', vehicleColour), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '5000', ['caller'] = 'Local'}
                                 TriggerServerEvent('mdt:newCall', data.name, data.caller, vector3(data.loc.x, data.loc.y, data.loc.z), data)
                                 config.timer['speeding'] = config.speeding.success
                             end
