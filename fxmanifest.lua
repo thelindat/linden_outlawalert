@@ -1,5 +1,7 @@
-fx_version 'adamant'
+fx_version 'cerulean'
 game 'gta5'
+
+version '1.0.1'
 
 server_scripts {
 	'@mysql-async/lib/MySQL.lua',
@@ -8,6 +10,7 @@ server_scripts {
 
 
 client_script 'client.lua'
+
 shared_script 'config.lua'
 
 ui_page {
