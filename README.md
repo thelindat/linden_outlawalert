@@ -1,5 +1,6 @@
-# mdt_calls (for use with Hypaste MDT)
-<img src="https://i.imgur.com/kxdCVOB.png"></img>
+# mdt_outlawalert
+Intended for use with [ESX] Hypaste RP’s Mobile Data Terminal by distritic, but it is not required
+<img src="https://i.imgur.com/BObfR4T.png"></img>
 ### Instructions
   Download and setup Hypaste RP's MDT (link in credits)  
   Open mdt/sv_mdt.lua and locate RegisterServerEvent("mdt:newCall"), replace with:  
