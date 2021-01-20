@@ -204,7 +204,6 @@ Citizen.CreateThread(function()
                     end
                         
                     if timer['speeding'] == 0 and IsPedInAnyVehicle(playerPed) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(40,80)))) then
-                        print('speedcheck')
                         if zoneChance('speeding', playerCoords, street) then
                             Citizen.Wait(2000)
                             local netid = NetworkGetNetworkIdFromEntity(vehicle)
