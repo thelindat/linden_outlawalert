@@ -34,7 +34,7 @@ end)
 
 RegisterNetEvent('mdt_outlawalert:SendAlert')
 AddEventHandler('mdt_outlawalert:SendAlert', function(data)
-    Citizen.Wait(2000)
+    Citizen.Wait(1500)
     local callstreet = GetStreetNameFromHashKey(GetStreetNameAtCoord(data.loc.x, data.loc.y, data.loc.z))
     local callzone = GetLabelText(GetNameOfZone(data.loc.x, data.loc.y, data.loc.z))
     data.loc = ('%s %s'):format(callstreet, callzone)
@@ -76,6 +76,13 @@ AddEventHandler('mdt_outlawalert:SendAlert', function(data)
         end
     end
 end)
+
+function getSpeed()
+    return speedlimit
+end
+function getStreet()
+    return street
+end
 
 function refreshPlayerWhitelisted()
 	if not ESX.PlayerData then
@@ -147,12 +154,12 @@ Citizen.CreateThread(function()
                 if v > 0 then config.timer[k] = v - 1 end
             end
             if config.timer['shooting'] == 0 and IsPedArmed(playerPed, 4) then sleep = 20 else sleep = 100 end
-
             if updateStreet == 0 then street = GetStreetNameFromHashKey(GetStreetNameAtCoord(playerCoords.x, playerCoords.y, playerCoords.z)) end
-            if updateStreet == 5 then lastStreet = street updateStreet = 0 else updateStreet = updateStreet + 1 end
+            if updateStreet == 3 then lastStreet = street updateStreet = 0 else updateStreet = updateStreet + 1 end
 
             if not IsPedInAnyVehicle(playerPed, 1) then
                 if config.timer['shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
+                    Citizen.Wait(500)
                     if zoneChance('shooting', playerCoords, street) then
                         local netid = NetworkGetNetworkIdFromEntity(playerPed)
                         local data = {['code'] = '10-71', ['name'] = 'Discharge of a firearm', ['style'] = 'police', ['desc'] = nil, ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
@@ -200,7 +207,7 @@ Citizen.CreateThread(function()
                         end
                     end
 
-                    if config.timer['speeding'] == 0 and street ~= lastStreet then speedlimit = speedlimitValues[street] end
+                    if street ~= lastStreet then speedlimit = speedlimitValues[street] end
                     local plate = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle))
                     local vehicleLabel = GetDisplayNameFromVehicleModel(GetEntityModel(vehicle))
                     vehicleLabel = GetLabelText(vehicleLabel)
@@ -213,6 +220,7 @@ Citizen.CreateThread(function()
 
                     if config.timer['shooting'] == 0 then
                         if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
+                            Citizen.Wait(500)
                             if zoneChance('shooting', playerCoords, street) then
                                 local netid = NetworkGetNetworkIdFromEntity(vehicle)
                                 local data = {['code'] = '10-71b', ['name'] = 'Drive-by shooting', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
@@ -227,6 +235,7 @@ Citizen.CreateThread(function()
                     end
                         
                     if config.timer['speeding'] == 0 and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(40,80)))) then
+                        Citizen.Wait(500)
                         if zoneChance('speeding', playerCoords, street) then
                             local netid = NetworkGetNetworkIdFromEntity(vehicle)
                             if IsPedInAnyVehicle(playerPed, 1) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
@@ -239,16 +248,21 @@ Citizen.CreateThread(function()
                             config.timer['speeding'] = config.speeding.fail
                         end
                     end
-                    if config.timer['autotheft'] == 0 and IsPedJacking(playerPed) then
-                        print('theft')
-                        if zoneChance('autotheft', playerCoords, street) then
-                            local netid = NetworkGetNetworkIdFromEntity(GetVehiclePedIsUsing(playerPed))
-                            local data = {['code'] = '503', ['name'] = 'Theft of a motor vehicle', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '5000', ['caller'] = 'Local'}
-                                TriggerServerEvent('mdt:newCall', data.name, data.caller, vector3(data.loc.x, data.loc.y, data.loc.z), data)
-                            config.timer['autotheft'] = config.autotheft.success
-                        else
-                            config.timer['autotheft'] = config.autotheft.fail
-                        end
+                    if config.timer['autotheft'] == 0 and (IsPedJacking(playerPed) or IsPedTryingToEnterALockedVehicle) then
+                        Citizen.Wait(500)
+                        local plate = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle))
+                        ESX.TriggerServerCallback('mdt_outlawalert:isVehicleOwned', function(hasowner)
+                            if not hasowner then
+                                if zoneChance('autotheft', playerCoords, street) then
+                                    local netid = NetworkGetNetworkIdFromEntity(vehicle)
+                                    local data = {['code'] = '503', ['name'] = 'Theft of a motor vehicle', ['style'] = 'police', ['desc'] = ('[%s] %s'):format(plate, vehicleName), ['desc2'] = ('%s%s'):format('<i class="fas fa-palette"></i>', vehicleColour), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '5000', ['caller'] = 'Local'}
+                                        TriggerServerEvent('mdt:newCall', data.name, data.caller, vector3(data.loc.x, data.loc.y, data.loc.z), data)
+                                    config.timer['autotheft'] = config.autotheft.success
+                                else
+                                    config.timer['autotheft'] = config.autotheft.fail
+                                end
+                            end
+                        end, plate)
                     end
                 end
             end
