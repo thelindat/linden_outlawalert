@@ -3,7 +3,7 @@ config.speeding = {}
 config.shooting = {}
 config.autotheft = {}
 
-config.timer = {['shooting'] = 0, ['speeding'] = 0, ['autotheft'] = 0}
+config.timer = {['shooting'] = 1, ['speeding'] = 1, ['autotheft'] = 1}
 
 -- use phone_number instead of player name for 911 calls
 config.phone_number = true
