@@ -248,7 +248,7 @@ Citizen.CreateThread(function()
                         end
                         Citizen.Wait(0)
                     end
-                    if config.timer['autotheft'] == 0 and (IsPedJacking(playerPed) or IsPedTryingToEnterALockedVehicle) then
+                    if config.timer['autotheft'] == 0 and (IsPedTryingToEnterALockedVehicle(playerPed) or IsPedJacking(playerPed)) then
                         local plate = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle))
                         ESX.TriggerServerCallback('mdt_outlawalert:isVehicleOwned', function(hasowner)
                             if not hasowner then
