@@ -9,21 +9,22 @@ config.timer = {['shooting'] = 0, ['speeding'] = 0, ['autotheft'] = 0}
 config.phone_number = true
 
 -- enable alerts when cops break the law and print to console
-config.debug = false
+config.debug = true
 
 -- sets report chance to 100%
-config.debugchance = false
+config.debugchance = true
 
 
 -- set timers after performing a check
 config.speeding.success = 300 -- 30 seconds
-config.speeding.fail = 15 -- 1.5 seconds
+config.speeding.fail = 20 -- 2 seconds
 
-config.shooting.success = 150 -- 15 seconds
-config.shooting.fail = 5 -- 0.5 seconds
+config.shooting.success = 150
+config.shooting.fail = 0
 
-config.autotheft.success = 300 -- 30 seconds
-config.autotheft.fail = 15 -- 1.5 seconds
+config.autotheft.success = 300
+config.autotheft.fail = 15
+
 
 colours = {
     ['0'] = "Metallic Black",
