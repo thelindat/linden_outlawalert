@@ -159,7 +159,6 @@ Citizen.CreateThread(function()
 
             if not IsPedInAnyVehicle(playerPed, 1) then
                 if config.timer['shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
-                    Citizen.Wait(500)
                     if zoneChance('shooting', playerCoords, street) then
                         local netid = NetworkGetNetworkIdFromEntity(playerPed)
                         local data = {['code'] = '10-71', ['name'] = 'Discharge of a firearm', ['style'] = 'police', ['desc'] = nil, ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
@@ -168,6 +167,7 @@ Citizen.CreateThread(function()
                     else
                         config.timer['shooting'] = config.shooting.fail
                     end
+                    Citizen.Wait(0)
                 end
             elseif IsPedInAnyVehicle(playerPed, 1) and not IsPedInAnyHeli(playerPed) and not IsPedInAnyPlane(playerPed) and not IsPedInAnyTrain(playerPed) and not IsPedInAnyBoat(playerPed) then
                 local vehicle = GetVehiclePedIsUsing(playerPed)
@@ -220,7 +220,6 @@ Citizen.CreateThread(function()
 
                     if config.timer['shooting'] == 0 then
                         if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
-                            Citizen.Wait(500)
                             if zoneChance('shooting', playerCoords, street) then
                                 local netid = NetworkGetNetworkIdFromEntity(vehicle)
                                 local data = {['code'] = '10-71b', ['name'] = 'Drive-by shooting', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
@@ -231,11 +230,11 @@ Citizen.CreateThread(function()
                                 config.timer['shooting'] = config.shooting.fail
                                 sleep = 100
                             end
+                            Citizen.Wait(0)
                         end
                     end
                         
                     if config.timer['speeding'] == 0 and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(40,80)))) then
-                        Citizen.Wait(500)
                         if zoneChance('speeding', playerCoords, street) then
                             local netid = NetworkGetNetworkIdFromEntity(vehicle)
                             if IsPedInAnyVehicle(playerPed, 1) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
@@ -247,9 +246,9 @@ Citizen.CreateThread(function()
                         else
                             config.timer['speeding'] = config.speeding.fail
                         end
+                        Citizen.Wait(0)
                     end
                     if config.timer['autotheft'] == 0 and (IsPedJacking(playerPed) or IsPedTryingToEnterALockedVehicle) then
-                        Citizen.Wait(500)
                         local plate = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle))
                         ESX.TriggerServerCallback('mdt_outlawalert:isVehicleOwned', function(hasowner)
                             if not hasowner then
@@ -263,6 +262,7 @@ Citizen.CreateThread(function()
                                 end
                             end
                         end, plate)
+                        Citizen.Wait(0)
                     end
                 end
             end
