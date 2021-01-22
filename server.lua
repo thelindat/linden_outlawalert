@@ -53,9 +53,9 @@ local dispatchCodes = {
 
 
 --[[ Example custom alert
-local data = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000', infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'}
 RegisterCommand('testvangelico', function(playerId, args, rawCommand)
-    local dispatchData = {dispatchData = data , dispatchCode = 'vangelico', caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
+    local data = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000', infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'}
+    local dispatchData = {dispatchData = data, caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
     TriggerEvent('wf-alerts:svNotify', dispatchData)
 end, false)
 --]]
@@ -64,8 +64,7 @@ end, false)
 RegisterServerEvent('wf-alerts:svNotify')
 AddEventHandler('wf-alerts:svNotify', function(pData)
     local dispatchData
-    if dispatchCodes[pData.dispatchCode] ~= nil then dispatchData = dispatchCodes[pData.dispatchCode]
-    elseif pData.dispatchData ~= nil then dispatchData = pData.dispatchData end
+    if not pData.dispatchCode then dispatchData = pData.dispatchData elseif dispatchCodes[pData.dispatchCode] ~= nil then dispatchData = dispatchCodes[pData.dispatchCode] end
     pData.displayCode = dispatchData.displayCode
     pData.dispatchMessage = dispatchData.description
     pData.isImportant = dispatchData.isImportant
