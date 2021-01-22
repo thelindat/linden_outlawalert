@@ -125,16 +125,16 @@ function vehicleData(vehicle)
     elseif vehicleClass == 5 then vehicleClass = _U('sports_classic')
     elseif vehicleClass == 6 then vehicleClass = _U('sports')
     elseif vehicleClass == 7 then vehicleClass = _U('super')
-    elseif vehicleClass == 8 then vehicleClass = U('motorcycle')
-    elseif vehicleClass == 9 then vehicleClass = U('offroad')
+    elseif vehicleClass == 8 then vehicleClass = _U('motorcycle')
+    elseif vehicleClass == 9 then vehicleClass = _U('offroad')
     elseif vehicleClass == 10 then vehicleClass = _U('industrial')
-    elseif vehicleClass == 11 then vehicleClass = U('utility')
-    elseif vehicleClass == 12 then vehicleClass = U('van')
+    elseif vehicleClass == 11 then vehicleClass = _U('utility')
+    elseif vehicleClass == 12 then vehicleClass = _U('van')
     elseif vehicleClass == 13 then vehicleClass = 'dnr' -- bicycle
     elseif vehicleClass == 17 then vehicleClass = _U('service')
     elseif vehicleClass == 18 then vehicleClass = 'dnr' -- emergency
     elseif vehicleClass == 19 then vehicleClass = _U('military')
-    elseif vehicleClass == 20 then vehicleClass = U('truck')
+    elseif vehicleClass == 20 then vehicleClass = _U('truck')
     end
     if vehicleClass ~= 'dnr' then
         local vehicleName = GetLabelText(GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)))
