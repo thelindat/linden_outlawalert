@@ -92,3 +92,29 @@ AddEventHandler('wf-alerts:svNotify', function(pData)
         end
     end
 end)
+
+
+RegisterServerEvent('wf-alerts:svNotify911')
+AddEventHandler('wf-alerts:svNotify911', function(message, caller, street, coords)
+    if message ~= nil then
+        local pData = {}
+        pData.displayCode = '911'
+        if caller == 'Unknown' then pData.dispatchMessage = 'Unknown caller' else
+        pData.dispatchMessage = 'Call from '..caller end
+        pData.recipientList = {'police', 'ambulance'}
+        pData.length = 6000
+        pData.street = street
+        pData.infoM = 'fa-phone'
+        pData.info = message
+        pData.coords = coords
+        local xPlayers = ESX.GetPlayers()
+		for i= 1, #xPlayers do
+            local source = xPlayers[i]
+            local xPlayer = ESX.GetPlayerFromId(source)
+            if xPlayer.job.name == 'police' or xPlayer.job.name == 'ambulance' then
+                TriggerClientEvent('wf-alerts:clNotify', source, pData)
+            end
+        end
+        TriggerEvent('mdt:newCall', message, caller, vector3(coords.x, coords.y, coords.z), false)
+    end
+end)

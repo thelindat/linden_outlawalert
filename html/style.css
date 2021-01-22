@@ -11,6 +11,8 @@
 
 .content {
     padding: 2% 2% 0% 2%;
+    overflow: hidden;
+    margin-right: 10px;
 }
 
 .fas {

@@ -1,7 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-version '2.0.0'
+version '2.0.1'
+description 'https://github.com/thelindat/mdt_outlawalert'
 
 client_scripts {
    'client.lua'

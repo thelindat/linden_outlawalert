@@ -327,16 +327,30 @@ end)
 Citizen.CreateThread(function()
 	local mdt = GetResourceState('mdt')
 	if GetResourceState('mdt') == 'started' or GetResourceState('mdt') == 'starting' then
-		RegisterCommand('911', function(playerId, args, rawCommand)
-			args = table.concat(args, ' ')
-			if Config.PhoneNumber then caller = phone else caller = ('%s %s'):format(firstname, lastname) end
-			TriggerServerEvent('mdt:newCall', args, caller, vector3(playerCoords.x, playerCoords.y, playerCoords.z))
-		end, false)
+        
+        if Config.Default911 then
+            RegisterCommand('911', function(playerId, args, rawCommand)
+                args = table.concat(args, ' ')
+                if Config.PhoneNumber then caller = phone else caller = ('%s %s'):format(firstname, lastname) end
+                TriggerServerEvent('mdt:newCall', args, caller, vector3(playerCoords.x, playerCoords.y, playerCoords.z))
+            end, false)
 
-		RegisterCommand('911a', function(playerId, args, rawCommand)
-			args = table.concat(args, ' ')
-			TriggerServerEvent('mdt:newCall', args, "Unknown", vector3(playerCoords.x, playerCoords.y, playerCoords.z))
-		end, false)
+            RegisterCommand('911a', function(playerId, args, rawCommand)
+                args = table.concat(args, ' ')
+                TriggerServerEvent('mdt:newCall', args, "Unknown", vector3(playerCoords.x, playerCoords.y, playerCoords.z))
+            end, false)
+        else
+            RegisterCommand('911', function(playerId, args, rawCommand)
+                args = table.concat(args, ' ')
+                if Config.PhoneNumber then caller = phone else caller = ('%s %s'):format(firstname, lastname) end
+                TriggerServerEvent('wf-alerts:svNotify911', args, caller, playerStreetsLocation, vector3(playerCoords.x, playerCoords.y, playerCoords.z))
+            end, false)
+
+            RegisterCommand('911a', function(playerId, args, rawCommand)
+                args = table.concat(args, ' ')
+                TriggerServerEvent('wf-alerts:svNotify911', args, 'Unknown', playerStreetsLocation, vector3(playerCoords.x, playerCoords.y, playerCoords.z))
+            end, false)
+        end
 	else
 		print("Resource 'mdt' is "..mdt)
 	end

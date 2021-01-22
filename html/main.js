@@ -16,6 +16,12 @@ $('document').ready(function() {
             }, data.length != null ? data.length : 2500);
     }
 
+    function truncate($str, $chars, $end = '...') {
+        if (strlen($str) <= $chars) return $str;
+        $new = substr($str, 0, $chars + 1);
+        return substr($new, 0, strrpos($new, ' ')) . $end;
+    }
+    
     function CreateNotification(data) {
        var $notification = $(document.createElement('div'));
        if (data.info.isImportant === 1) {
@@ -24,6 +30,11 @@ $('document').ready(function() {
             $notification.addClass('notification').addClass(data.job);
        }
        if (data.info.info !== undefined) {
+        data.info.info = data.info.info.substring(0,102);
+        var length = data.info.info.length
+        if (length >= 52) {
+            data.info.info2 = ''
+        }
 
         if(!/^[A-Za-z0-9]/.test(data.info.info)) {
             var right = data.info.info.search("\\]");

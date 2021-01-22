@@ -8,6 +8,9 @@ Config.Timer = {['Shooting'] = 1, ['Speeding'] = 1, ['Autotheft'] = 1}
 -- use phone_number instead of player name for 911 calls
 Config.PhoneNumber = true
 
+-- use mdt notifications for 911 calls instead of WF_Alerts
+Config.Default911 = false
+
 -- enable alerts when cops break the law and print to console
 Config.Debug = true
 
