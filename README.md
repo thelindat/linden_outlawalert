@@ -26,17 +26,20 @@ AddEventHandler("mdt:newCall", function(details, caller, coords, sendNotificatio
 end)
 ```  
 ### Custom alerts  
-Firstly, go into server.lua and add the new alert into the dispatchTables table.
+For example, if we were to edit one of the jewelry heist scripts, you can replace the default method for alerting the police with the following
 ```
-    vangelico = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000',
-    infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'},
+local data = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000', infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'}
+local dispatchData = {dispatchData = data , dispatchCode = 'vangelico', caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
+TriggerEvent('wf-alerts:svNotify', dispatchData)
 ```
-You can also define infoM2 and info2 for an additional line of text.  
+You can define infoM2 and info2 for an additional line of text. If you are triggering the event from a client make sure you use TriggerServerEvent.
 
-Create your event trigger
+Lastly, you can use the below code to use the report chance export. Setting the last number higher will reduce the likelihood of a notification being sent.
 ```
-    data = {dispatchCode = 'vangelico', caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
-    TriggerEvent('wf-alerts:svNotify', data)
+local chance = exports['linden_outlawalert']:zoneChance('Custom', GetEntityCoords(PlayerPedId(), exports['linden_outlawalert']:getStreet(), 2)
+if chance then
+	do stuff
+end
 ```
 
 
