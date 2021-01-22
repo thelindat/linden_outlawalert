@@ -2,7 +2,6 @@
 Intended for use with [ESX] Hypaste RP’s Mobile Data Terminal by distritic, but it is not required
 <img src="https://i.imgur.com/BObfR4T.png"></img>  
 Note: If upgrading from v1 you will need to update the mdt:newCall event once again. Any custom alerts will also need updating.
-I am still adding some important base functions so I recommend waiting.
 
 
 ### Instructions
@@ -27,14 +26,17 @@ AddEventHandler("mdt:newCall", function(details, caller, coords, sendNotificatio
 end)
 ```  
 ### Custom alerts  
-Firstly, go into server.lua and add the new alert into the dispatchTables table. Still missing multiple description lines for now.
+Firstly, go into server.lua and add the new alert into the dispatchTables table.
 ```
-vangelico = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '5000'},
+    vangelico = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000',
+    infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'},
 ```
+You can also define infoM2 and info2 for an additional line of text.  
+
 Create your event trigger
 ```
-data = {dispatchCode = 'vangelico', caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = storeCoords}
-TriggerEvent('wf-alerts:svNotify', data)
+    data = {dispatchCode = 'vangelico', caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
+    TriggerEvent('wf-alerts:svNotify', data)
 ```
 
 
