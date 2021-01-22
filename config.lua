@@ -3,7 +3,7 @@ Config.Speeding = {}
 Config.Shooting = {}
 Config.Autotheft = {}
 
-Config.Timer = {['Shooting'] = 1, ['Speeding'] = 1, ['Autotheft'] = 1}
+Config.Timer = {['Shooting'] = 0, ['Speeding'] = 0, ['Autotheft'] = 0}
 
 -- use phone_number instead of player name for 911 calls
 Config.PhoneNumber = true

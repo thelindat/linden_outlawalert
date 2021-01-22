@@ -1,8 +1,8 @@
 fx_version 'cerulean'
 game 'gta5'
 
-version '2.0.1'
-description 'https://github.com/thelindat/mdt_outlawalert'
+version '2.0.2'
+description 'https://github.com/thelindat/linden_outlawalert'
 
 client_scripts {
    'client.lua'
@@ -24,3 +24,6 @@ files {
 	'html/main.js', 
 	'html/style.css',
 }
+
+export "getSpeed"
+export "getStreet"

@@ -3,7 +3,7 @@ local currentStreetName, intersectStreetName, lastStreet, updateStreet, speedlim
 local isPlayerWhitelisted, playerPed, playerCoords, job, rank, firstname, lastname, phone
 
 function getSpeed() return speedlimit end
-function getStreet() return street end
+function getStreet() return currentStreetName end
 
 -- ESX Framework Stuff ---------------------------------------------------------------
 ESX = nil
@@ -38,9 +38,9 @@ end)
 
 function GetTheStreet()
     local x, y, z = table.unpack(GetEntityCoords(GetPlayerPed(-1), true))
-    local currentStreetHash, intersectStreetHash = GetStreetNameAtCoord(x, y, z, currentStreetHash, intersectStreetHash)
+    local currentStreetHash--[[, intersectStreetHash]] = GetStreetNameAtCoord(x, y, z, currentStreetHash--[[, intersectStreetHash]])
     currentStreetName = GetStreetNameFromHashKey(currentStreetHash)
-    intersectStreetName = GetStreetNameFromHashKey(intersectStreetHash)
+    --intersectStreetName = GetStreetNameFromHashKey(intersectStreetHash)
     zone = GetLabelText(GetNameOfZone(x, y, z))
     playerStreetsLocation = zone
 
@@ -74,7 +74,7 @@ function BlacklistedWeapon(playerPed)
     return false -- Is not a blacklisted weapon
 end
 
-function zoneChance(type, playerCoords, street)    
+function zoneChance(type, playerCoords, street)
     local zoneMod, zone, zoneid, sendit = 0, GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)), GetZoneAtCoords(playerCoords.x, playerCoords.y, playerCoords.z), false
     if Config.DebugChance then print('Sending it') return true else
 
@@ -111,6 +111,53 @@ function zoneChance(type, playerCoords, street)
             sendit = true
         end
         return sendit
+    end
+end
+
+function vehicleData(vehicle)
+    local vData = {}
+    local vehicleClass = GetVehicleClass(vehicle)
+    if vehicleClass == 0 then vehicleClass = 'Compact'
+    elseif vehicleClass == 1 then vehicleClass = 'Sedan'
+    elseif vehicleClass == 2 then vehicleClass = 'SUV'
+    elseif vehicleClass == 3 then vehicleClass = 'Coupe'
+    elseif vehicleClass == 4 then vehicleClass = 'Muscle car'
+    elseif vehicleClass == 5 then vehicleClass = 'Sports Classic'
+    elseif vehicleClass == 6 then vehicleClass = 'Sports car'
+    elseif vehicleClass == 7 then vehicleClass = 'Super car'
+    elseif vehicleClass == 8 then vehicleClass = 'Motorcycle'
+    elseif vehicleClass == 9 then vehicleClass = 'Off-road'
+    elseif vehicleClass == 10 then vehicleClass = 'Industrial Vehicle'
+    elseif vehicleClass == 11 then vehicleClass = 'Utility Vehicle'
+    elseif vehicleClass == 12 then vehicleClass = 'Van'
+    elseif vehicleClass == 13 then vehicleClass = 'dnr' -- bicycle
+    elseif vehicleClass == 17 then vehicleClass = 'Service Vehicle'
+    elseif vehicleClass == 18 then vehicleClass = 'dnr' -- emergency
+    elseif vehicleClass == 19 then vehicleClass = 'Military Vehicle'
+    elseif vehicleClass == 20 then vehicleClass = 'Truck'
+    end
+    if vehicleClass ~= 'dnr' then
+        local vehicleName = GetLabelText(GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)))
+        local vehicleColour1, vehicleColour2 = GetVehicleColours(vehicle)
+        if vehicleColour1 then
+            if Config.Colours[tostring(vehicleColour2)] and Config.Colours[tostring(vehicleColour1)] then
+                vehicleColour = Config.Colours[tostring(vehicleColour2)] .. " on " .. Config.Colours[tostring(vehicleColour1)]
+            elseif Config.Colours[tostring(vehicleColour1)] then
+                vehicleColour = Config.Colours[tostring(vehicleColour1)]
+            elseif Config.Colours[tostring(vehicleColour2)] then
+                vehicleColour = Config.Colours[tostring(vehicleColour2)]
+            else
+                vehicleColour = "Unknown"
+            end
+        end
+        local plate = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle))
+        local vehicleDoors = GetVehicleModelNumberOfSeats(GetEntityModel(vehicle))
+        if vehicleClass == 'Motorcycle' then vehicleDoors = ''
+        elseif vehicleDoors == 2 then vehicleDoors = 'Two-door'
+        elseif vehicleDoors == 3 then vehicleDoors = 'Three-door'
+        elseif vehicleDoors == 4 then vehicleDoors = 'Four-door' end
+        vData.class, vData.name, vData.colour, vData.doors, vData.plate, vData.id = vehicleClass, vehicleName, vehicleColour, vehicleDoors, plate, NetworkGetNetworkIdFromEntity(vehicle)
+        return vData
     end
 end
 
@@ -187,123 +234,67 @@ Citizen.CreateThread(function()
         Citizen.Wait(0)
         playerPed = PlayerPedId()
         playerCoords = GetEntityCoords(playerPed)
+        if updateStreet == 0 then GetTheStreet() end
+        if updateStreet == 3 then lastStreet = currentStreetName updateStreet = 0 else updateStreet = updateStreet + 1 end
+        if currentStreetName ~= lastStreet then speedlimit = speedlimitValues[currentStreetName] end
+
         if (not isPlayerWhitelisted or Config.Debug) then
             for k, v in pairs(Config.Timer) do
                 if v > 0 then Config.Timer[k] = v - 1 end
             end
             if Config.Timer['Shooting'] == 0 and IsPedArmed(playerPed, 4) then sleep = 20 else sleep = 100 end
-            if updateStreet == 0 then GetTheStreet() end
-            if updateStreet == 3 then lastStreet = street updateStreet = 0 else updateStreet = updateStreet + 1 end
 
-            if not IsPedInAnyVehicle(playerPed, 1) then
+            if GetVehiclePedIsUsing(playerPed) ~= 0 and not IsPedInAnyHeli(playerPed) and not IsPedInAnyPlane(playerPed) and not IsPedInAnyTrain(playerPed) and not IsPedInAnyBoat(playerPed) then
+                local vehicle = GetVehiclePedIsUsing(playerPed, true)
+                local veh = vehicleData(GetVehiclePedIsUsing(playerPed, true))
+                    if Config.Timer['Shooting'] == 0 then
+                    if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
+                        if zoneChance('Shooting', playerCoords, currentStreetName) then
+                            data = {dispatchCode = 'driveby', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id, length = 6000,
+                            info = ('[%s] %s %s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
+                            TriggerServerEvent('wf-alerts:svNotify', data)
+                            Config.Timer['Shooting'] = Config.Shooting.Success
+                            sleep = 100
+                        else
+                            Config.Timer['Shooting'] = Config.Shooting.Fail
+                            sleep = 100
+                        end
+                    end
+                end    
+                if Config.Timer['Speeding'] == 0 and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(40,80)))) then
+                    if zoneChance('Speeding', playerCoords, currentStreetName) then
+                        if IsPedInAnyVehicle(playerPed, true) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
+                            playerCoords = GetEntityCoords(playerPed)
+                            data = {dispatchCode = 'speeding', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
+                            info = ('[%s] %s %s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
+                            TriggerServerEvent('wf-alerts:svNotify', data)
+                            Config.Timer['Speeding'] = Config.Speeding.Success
+                        end
+                    else
+                        Config.Timer['Speeding'] = Config.Speeding.Fail
+                    end
+                end
+                if Config.Timer['Autotheft'] == 0 and (IsPedTryingToEnterALockedVehicle(playerPed) or IsPedJacking(playerPed)) then
+                    ESX.TriggerServerCallback('linden_outlawalert:isVehicleOwned', function(hasowner) veh.owned = hasowner end, veh.plate)
+                    if not veh.owned then
+                        if zoneChance('Autotheft', playerCoords, currentStreetName) then
+                            data = {dispatchCode = 'autotheft', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
+                            info = ('[%s] %s %s'):format(veh.plate, veh.name..',', veh.class), info2 = veh.colour}
+                            TriggerServerEvent('wf-alerts:svNotify', data)
+                            Config.Timer['Autotheft'] = Config.Autotheft.Success
+                        else
+                            Config.Timer['Autotheft'] = Config.Autotheft.Fail
+                        end
+                    end
+                end
+            else
                 if Config.Timer['Shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
                     if zoneChance('Shooting', playerCoords, currentStreetName) then
-                        local netId = NetworkGetNetworkIdFromEntity(playerPed)
-                        data = {dispatchCode = 'shooting', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId, length = 6000}
+                        data = {dispatchCode = 'shooting', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
                         TriggerServerEvent('wf-alerts:svNotify', data)
                         Config.Timer['Shooting'] = Config.Shooting.Success
                     else
                         Config.Timer['Shooting'] = Config.Shooting.Fail
-                    end
-                    Citizen.Wait(0)
-                end
-            elseif IsPedInAnyVehicle(playerPed, 1) and not IsPedInAnyHeli(playerPed) and not IsPedInAnyPlane(playerPed) and not IsPedInAnyTrain(playerPed) and not IsPedInAnyBoat(playerPed) then
-                local vehicle = GetVehiclePedIsUsing(playerPed)
-                local vehicleClass = GetVehicleClass(vehicle)
-                if vehicleClass == 0 then vehicleClass = 'Compact'
-                elseif vehicleClass == 1 then vehicleClass = 'Sedan'
-                elseif vehicleClass == 2 then vehicleClass = 'SUV'
-                elseif vehicleClass == 3 then vehicleClass = 'Coupe'
-                elseif vehicleClass == 4 then vehicleClass = 'Muscle car'
-                elseif vehicleClass == 5 then vehicleClass = 'Sports Classic'
-                elseif vehicleClass == 6 then vehicleClass = 'Sports car'
-                elseif vehicleClass == 7 then vehicleClass = 'Super car'
-                elseif vehicleClass == 8 then vehicleClass = 'Motorcycle'
-                elseif vehicleClass == 9 then vehicleClass = 'Off-road'
-                elseif vehicleClass == 10 then vehicleClass = 'Industrial Vehicle'
-                elseif vehicleClass == 11 then vehicleClass = 'Utility Vehicle'
-                elseif vehicleClass == 12 then vehicleClass = 'Van'
-                elseif vehicleClass == 13 then vehicleClass = 'dnr' -- bicycle
-                elseif vehicleClass == 17 then vehicleClass = 'Service Vehicle'
-                elseif vehicleClass == 18 then vehicleClass = 'dnr' -- emergency
-                elseif vehicleClass == 19 then vehicleClass = 'Military Vehicle'
-                elseif vehicleClass == 20 then vehicleClass = 'Truck'
-                end
-                if vehicleClass ~= 'dnr' then
-                    local vehicleName = GetLabelText(GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)))
-                    local vehicleColour1, vehicleColour2 = GetVehicleColours(vehicle)
-
-                    if vehicleColour1 then
-                        if Config.Colours[tostring(vehicleColour2)] and Config.Colours[tostring(vehicleColour1)] then
-                            vehicleColour = Config.Colours[tostring(vehicleColour2)] .. " on " .. Config.Colours[tostring(vehicleColour1)]
-                        elseif Config.Colours[tostring(vehicleColour1)] then
-                            vehicleColour = Config.Colours[tostring(vehicleColour1)]
-                        elseif Config.Colours[tostring(vehicleColour2)] then
-                            vehicleColour = Config.Colours[tostring(vehicleColour2)]
-                        else
-                            vehicleColour = "Unknown"
-                        end
-                    end
-
-                    if currentStreetName ~= lastStreet then speedlimit = speedlimitValues[currentStreetName] end
-                    local plate = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle))
-                    local vehicleLabel = GetDisplayNameFromVehicleModel(GetEntityModel(vehicle))
-                    vehicleLabel = GetLabelText(vehicleLabel)
-                    local vehicleDoors = GetVehicleModelNumberOfSeats(GetEntityModel(vehicle))
-                    if vehicleClass == 'Motorcycle' then vehicleDoors = ''
-                    elseif vehicleDoors == 2 then vehicleDoors = 'Two-door'
-                    elseif vehicleDoors == 3 then vehicleDoors = 'Three-door'
-                    elseif vehicleDoors == 4 then vehicleDoors = 'Four-door' end
-
-
-                    if Config.Timer['Shooting'] == 0 then
-                        if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
-                            if zoneChance('Shooting', playerCoords, currentStreetName) then
-                                local netId = NetworkGetNetworkIdFromEntity(vehicle)
-                                data = {dispatchCode = 'driveby', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId, length = 6000,
-                                info = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), info2 = vehicleColour}
-                                TriggerServerEvent('wf-alerts:svNotify', data)
-                                Config.Timer['Shooting'] = Config.Shooting.Success
-                                sleep = 100
-                            else
-                                Config.Timer['Shooting'] = Config.Shooting.Fail
-                                sleep = 100
-                            end
-                            Citizen.Wait(0)
-                        end
-                    end
-                        
-                    if Config.Timer['Speeding'] == 0 and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(40,80)))) then
-                        if zoneChance('Speeding', playerCoords, currentStreetName) then
-                            local netId = NetworkGetNetworkIdFromEntity(vehicle)
-                            if IsPedInAnyVehicle(playerPed, 1) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
-                                playerCoords = GetEntityCoords(playerPed)
-                                data = {dispatchCode = 'speeding', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId,
-                                info = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), info2 = vehicleColour}
-                                TriggerServerEvent('wf-alerts:svNotify', data)
-                                Config.Timer['Speeding'] = Config.Speeding.Success
-                            end
-                        else
-                            Config.Timer['Speeding'] = Config.Speeding.Fail
-                        end
-                        Citizen.Wait(0)
-                    end
-                    if Config.Timer['Autotheft'] == 0 and (IsPedTryingToEnterALockedVehicle(playerPed) or IsPedJacking(playerPed)) then
-                        local plate = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle))
-                        ESX.TriggerServerCallback('mdt_outlawalert:isVehicleOwned', function(hasowner)
-                            if not hasowner then
-                                if zoneChance('Autotheft', playerCoords, currentStreetName) then
-                                    local netId = NetworkGetNetworkIdFromEntity(vehicle)
-                                    data = {dispatchCode = 'autotheft', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId,
-                                    info = ('[%s] %s %s'):format(plate, vehicleName..',', vehicleClass), info2 = vehicleColour}
-                                    TriggerServerEvent('wf-alerts:svNotify', data)
-                                    Config.Timer['Autotheft'] = Config.Autotheft.Success
-                                else
-                                    Config.Timer['Autotheft'] = Config.Autotheft.Fail
-                                end
-                            end
-                        end, plate)
-                        Citizen.Wait(0)
                     end
                 end
             end

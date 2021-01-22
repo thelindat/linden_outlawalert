@@ -74,6 +74,7 @@ AddEventHandler('wf-alerts:svNotify', function(pData)
             pData.infoM = dispatchData.infoM
             pData.infoM2 = dispatchData.infoM2
             pData.length = dispatchData.length
+            Citizen.Wait(1500)
             local xPlayers = ESX.GetPlayers()
 		    for i= 1, #xPlayers do
                 local source = xPlayers[i]
