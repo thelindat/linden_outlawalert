@@ -1,31 +1,31 @@
-config = {}
-config.speeding = {}
-config.shooting = {}
-config.autotheft = {}
+Config = {}
+Config.Speeding = {}
+Config.Shooting = {}
+Config.Autotheft = {}
 
-config.timer = {['shooting'] = 1, ['speeding'] = 1, ['autotheft'] = 1}
+Config.Timer = {['Shooting'] = 1, ['Speeding'] = 1, ['Autotheft'] = 1}
 
 -- use phone_number instead of player name for 911 calls
-config.phone_number = true
+Config.PhoneNumber = true
 
 -- enable alerts when cops break the law and print to console
-config.debug = true
+Config.Debug = true
 
 -- sets report chance to 100%
-config.debugchance = true
+Config.DebugChance = true
 
 
 -- set timers after performing a check
-config.speeding.success = 300 -- 30 seconds
-config.speeding.fail = 20 -- 2 seconds
+Config.Speeding.Success = 300 -- 30 seconds
+Config.Speeding.Fail = 20 -- 2 seconds
 
-config.shooting.success = 150
-config.shooting.fail = 0
+Config.Shooting.Success = 150
+Config.Shooting.Fail = 0
 
-config.autotheft.success = 300
-config.autotheft.fail = 15
+Config.Autotheft.Success = 300
+Config.Autotheft.Fail = 15
 
-config.WeaponBlacklist = {
+Config.WeaponBlacklist = {
 	'WEAPON_GRENADE',
 	'WEAPON_BZGAS',
 	'WEAPON_MOLOTOV',
@@ -43,7 +43,7 @@ config.WeaponBlacklist = {
 	'WEAPON_STUNGUN'
 }
 
-colours = {
+Config.Colours = {
     ['0'] = "Metallic Black",
     ['1'] = "Metallic Graphite Black",
     ['2'] = "Metallic Black Steel",
