@@ -74,11 +74,11 @@ function BlacklistedWeapon(playerPed)
     return false -- Is not a blacklisted weapon
 end
 
-function zoneChance(type, playerCoords, street)
-    local zoneMod, zone, zoneid, sendit = 0, GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)), GetZoneAtCoords(playerCoords.x, playerCoords.y, playerCoords.z), false
+function zoneChance(type, playerCoords, street, zoneMod)
+    local zone, zoneid, sendit = GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)), GetZoneAtCoords(playerCoords.x, playerCoords.y, playerCoords.z), false
     if Config.DebugChance then print('Sending it') return true else
 
-        if zoneMod == 0 then zoneMod = 3 end
+        if zoneMod == nil then zoneMod = 2 end
         if type == 'Speeding' then zoneMod = zoneMod * 2 end
         local zoneScum = GetZoneScumminess(zoneid)
         if zoneScum == 1 then zoneMod = zoneMod * 5
@@ -117,24 +117,24 @@ end
 function vehicleData(vehicle)
     local vData = {}
     local vehicleClass = GetVehicleClass(vehicle)
-    if vehicleClass == 0 then vehicleClass = 'Compact'
-    elseif vehicleClass == 1 then vehicleClass = 'Sedan'
-    elseif vehicleClass == 2 then vehicleClass = 'SUV'
-    elseif vehicleClass == 3 then vehicleClass = 'Coupe'
-    elseif vehicleClass == 4 then vehicleClass = 'Muscle car'
-    elseif vehicleClass == 5 then vehicleClass = 'Sports Classic'
-    elseif vehicleClass == 6 then vehicleClass = 'Sports car'
-    elseif vehicleClass == 7 then vehicleClass = 'Super car'
-    elseif vehicleClass == 8 then vehicleClass = 'Motorcycle'
-    elseif vehicleClass == 9 then vehicleClass = 'Off-road'
-    elseif vehicleClass == 10 then vehicleClass = 'Industrial Vehicle'
-    elseif vehicleClass == 11 then vehicleClass = 'Utility Vehicle'
-    elseif vehicleClass == 12 then vehicleClass = 'Van'
+    if vehicleClass == 0 then vehicleClass = _U('compact')
+    elseif vehicleClass == 1 then vehicleClass = _U('sedan')
+    elseif vehicleClass == 2 then vehicleClass = _U('suv')
+    elseif vehicleClass == 3 then vehicleClass = _U('coupe')
+    elseif vehicleClass == 4 then vehicleClass = _U('muscle')
+    elseif vehicleClass == 5 then vehicleClass = _U('sports_classic')
+    elseif vehicleClass == 6 then vehicleClass = _U('sports')
+    elseif vehicleClass == 7 then vehicleClass = _U('super')
+    elseif vehicleClass == 8 then vehicleClass = U('motorcycle')
+    elseif vehicleClass == 9 then vehicleClass = U('offroad')
+    elseif vehicleClass == 10 then vehicleClass = _U('industrial')
+    elseif vehicleClass == 11 then vehicleClass = U('utility')
+    elseif vehicleClass == 12 then vehicleClass = U('van')
     elseif vehicleClass == 13 then vehicleClass = 'dnr' -- bicycle
-    elseif vehicleClass == 17 then vehicleClass = 'Service Vehicle'
+    elseif vehicleClass == 17 then vehicleClass = _U('service')
     elseif vehicleClass == 18 then vehicleClass = 'dnr' -- emergency
-    elseif vehicleClass == 19 then vehicleClass = 'Military Vehicle'
-    elseif vehicleClass == 20 then vehicleClass = 'Truck'
+    elseif vehicleClass == 19 then vehicleClass = _U('military')
+    elseif vehicleClass == 20 then vehicleClass = U('truck')
     end
     if vehicleClass ~= 'dnr' then
         local vehicleName = GetLabelText(GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)))
@@ -153,9 +153,9 @@ function vehicleData(vehicle)
         local plate = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle))
         local vehicleDoors = GetVehicleModelNumberOfSeats(GetEntityModel(vehicle))
         if vehicleClass == 'Motorcycle' then vehicleDoors = ''
-        elseif vehicleDoors == 2 then vehicleDoors = 'Two-door'
-        elseif vehicleDoors == 3 then vehicleDoors = 'Three-door'
-        elseif vehicleDoors == 4 then vehicleDoors = 'Four-door' end
+        elseif vehicleDoors == 2 then vehicleDoors = _U('two_door')
+        elseif vehicleDoors == 3 then vehicleDoors = _U('three_door')
+        elseif vehicleDoors == 4 then vehicleDoors = _U('four_door') end
         vData.class, vData.name, vData.colour, vData.doors, vData.plate, vData.id = vehicleClass, vehicleName, vehicleColour, vehicleDoors, plate, NetworkGetNetworkIdFromEntity(vehicle)
         return vData
     end
@@ -203,31 +203,6 @@ AddEventHandler('wf-alerts:clNotify', function(pData)
     end
 end)
 
-
---[[ Testing Stuff
-RegisterNetEvent('wl-alerts:civilian:notify')
-AddEventHandler('wl-alerts:civilian:notify', function(alertType)
-    street = GetTheStreet()
-    playerPed = PlayerPedId()
-    playerCoords = GetEntityCoords(playerPed)
-    local netId = NetworkGetNetworkIdFromEntity(playerPed)
-
-    --if alertType == "Suspicious" and not popo or alertType == "Suspicious" and not ems then
-    if alertType == "Suspicious" then
-        data = {dispatchCode = 'fight', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId}
-        TriggerServerEvent('wf-alerts:svNotify', data)
-    end
-
-end)
-
-Citizen.CreateThread(function()
-    while true do
-        Citizen.Wait(3000)
-        TriggerEvent('wl-alerts:civilian:notify', 'Suspicious')
-    end
-end)
---]]
-
 Citizen.CreateThread(function()
     local sleep = 100
 	while true do
@@ -251,7 +226,7 @@ Citizen.CreateThread(function()
                     if Config.Timer['Shooting'] == 0 then
                         if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
                             if zoneChance('Shooting', playerCoords, currentStreetName) then
-                                data = {dispatchCode = 'driveby', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id, length = 6000,
+                                data = {dispatchCode = 'driveby', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = veh.id, length = 6000,
                                 info = ('[%s] %s %s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
                                 TriggerServerEvent('wf-alerts:svNotify', data)
                                 Config.Timer['Shooting'] = Config.Shooting.Success
@@ -266,7 +241,7 @@ Citizen.CreateThread(function()
                         if zoneChance('Speeding', playerCoords, currentStreetName) then
                             if IsPedInAnyVehicle(playerPed, true) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
                                 playerCoords = GetEntityCoords(playerPed)
-                                data = {dispatchCode = 'speeding', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
+                                data = {dispatchCode = 'speeding', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
                                 info = ('[%s] %s %s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
                                 TriggerServerEvent('wf-alerts:svNotify', data)
                                 Config.Timer['Speeding'] = Config.Speeding.Success
@@ -279,7 +254,7 @@ Citizen.CreateThread(function()
                         ESX.TriggerServerCallback('linden_outlawalert:isVehicleOwned', function(hasowner) veh.owned = hasowner end, veh.plate)
                         if not veh.owned then
                             if zoneChance('Autotheft', playerCoords, currentStreetName) then
-                                data = {dispatchCode = 'autotheft', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
+                                data = {dispatchCode = 'autotheft', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
                                 info = ('[%s] %s %s'):format(veh.plate, veh.name..',', veh.class), info2 = veh.colour}
                                 TriggerServerEvent('wf-alerts:svNotify', data)
                                 Config.Timer['Autotheft'] = Config.Autotheft.Success
@@ -291,7 +266,7 @@ Citizen.CreateThread(function()
                 else
                     if Config.Timer['Shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
                         if zoneChance('Shooting', playerCoords, currentStreetName) then
-                            data = {dispatchCode = 'shooting', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
+                            data = {dispatchCode = 'shooting', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
                             TriggerServerEvent('wf-alerts:svNotify', data)
                             Config.Timer['Shooting'] = Config.Shooting.Success
                         else
@@ -320,7 +295,6 @@ end)
 Citizen.CreateThread(function()
 	local mdt = GetResourceState('mdt')
 	if GetResourceState('mdt') == 'started' or GetResourceState('mdt') == 'starting' then
-        
         if Config.Default911 then
             RegisterCommand('911', function(playerId, args, rawCommand)
                 args = table.concat(args, ' ')
@@ -330,7 +304,7 @@ Citizen.CreateThread(function()
 
             RegisterCommand('911a', function(playerId, args, rawCommand)
                 args = table.concat(args, ' ')
-                TriggerServerEvent('mdt:newCall', args, "Unknown", vector3(playerCoords.x, playerCoords.y, playerCoords.z))
+                TriggerServerEvent('mdt:newCall', args, _U('caller_unknown'), vector3(playerCoords.x, playerCoords.y, playerCoords.z))
             end, false)
         else
             RegisterCommand('911', function(playerId, args, rawCommand)
@@ -341,7 +315,7 @@ Citizen.CreateThread(function()
 
             RegisterCommand('911a', function(playerId, args, rawCommand)
                 args = table.concat(args, ' ')
-                TriggerServerEvent('wf-alerts:svNotify911', args, 'Unknown', playerStreetsLocation, vector3(playerCoords.x, playerCoords.y, playerCoords.z))
+                TriggerServerEvent('wf-alerts:svNotify911', args, _U('caller_unknown'), playerStreetsLocation, vector3(playerCoords.x, playerCoords.y, playerCoords.z))
             end, false)
         end
 	else

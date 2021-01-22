@@ -1,18 +1,24 @@
 fx_version 'cerulean'
 game 'gta5'
 
-version '2.0.2'
+version '2.1.0'
 description 'https://github.com/thelindat/linden_outlawalert'
 
 client_scripts {
-   'client.lua'
+    '@es_extended/locale.lua',
+    'locales/en.lua',
+    'locales/fr.lua',
+    'client.lua',
 }
 
 shared_script 'config.lua'
 
 server_scripts {
+    '@es_extended/locale.lua',
     '@mysql-async/lib/MySQL.lua',
-    'server.lua'
+    'locales/en.lua',
+    'locales/fr.lua',
+    'server.lua',
 }
 
 ui_page {
@@ -27,3 +33,4 @@ files {
 
 export "getSpeed"
 export "getStreet"
+export "zoneChance"

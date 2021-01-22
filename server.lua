@@ -34,64 +34,63 @@ end)
 
 local dispatchCodes = {
 
-    fight = { displayCode = '10-10', description = 'Fight in progress', isImportant = 0, recipientList = {'police', 'ambulance'} },
+    fight = { displayCode = '10-10', description = _U('fight'), isImportant = 0, recipientList = {'police', 'ambulance'} },
 
-    officerdown = {displayCode = '10-69', description = 'Officer is down', isImportant = 1, recipientList = {'police', 'ambulance'},
+    officerdown = {displayCode = '10-69', description = _U('officerdown'), isImportant = 1, recipientList = {'police', 'ambulance'},
     infoM = 'fa-portrait'},
 
-    autotheft = {displayCode = '503', description = 'Theft of a motor vehicle', isImportant = 0, recipientList = {'police'},
+    autotheft = {displayCode = '503', description = _U('autotheft'), isImportant = 0, recipientList = {'police'},
     infoM = 'fa-car', infoM2 = 'fa-palette' },
 
-    speeding = {displayCode = '505', description = 'Reckless driving', isImportant = 0, recipientList = {'police'},
+    speeding = {displayCode = '505', description = _U('speeding'), isImportant = 0, recipientList = {'police'},
     infoM = 'fa-car', infoM2 = 'fa-palette' },
 
-    shooting = { displayCode = '10-71', description = 'Discharge of a firearm', isImportant = 0, recipientList = {'police', 'ambulance'} },
+    shooting = { displayCode = '10-71', description = _U('shooting'), isImportant = 0, recipientList = {'police', 'ambulance'} },
 
-    driveby = { displayCode = '10-71b', description = 'Drive-by shooting', isImportant = 0, recipientList = {'police', 'ambulance'},
+    driveby = { displayCode = '10-71b', description = _U('driveby'), isImportant = 0, recipientList = {'police', 'ambulance'},
     infoM = 'fa-car', infoM2 = 'fa-palette' },
-
-    vangelico = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000',
-    infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'},
 }
 
---[[RegisterCommand('testvangelico', function(playerId, args, rawCommand)
-    data = {dispatchCode = 'vangelico', caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
-    TriggerEvent('wf-alerts:svNotify', data)
-end, false)]]
+
+--[[ Example custom alert
+local data = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000', infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'}
+RegisterCommand('testvangelico', function(playerId, args, rawCommand)
+    local dispatchData = {dispatchData = data , dispatchCode = 'vangelico', caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
+    TriggerEvent('wf-alerts:svNotify', dispatchData)
+end, false)
+--]]
 
 
 RegisterServerEvent('wf-alerts:svNotify')
 AddEventHandler('wf-alerts:svNotify', function(pData)
-    if pData ~= nil then
-        if dispatchCodes[pData.dispatchCode] ~= nil then
-            local dispatchData = dispatchCodes[pData.dispatchCode]
-            pData.displayCode = dispatchData.displayCode
-            pData.dispatchMessage = dispatchData.description
-            pData.isImportant = dispatchData.isImportant
-            pData.recipientList = dispatchData.recipientList
-            if not pData.info then pData.info = dispatchData.info end
-            if not pData.info2 then pData.info2 = dispatchData.info2 end
-            pData.infoM = dispatchData.infoM
-            pData.infoM2 = dispatchData.infoM2
-            pData.length = dispatchData.length
-            Citizen.Wait(1500)
-            local xPlayers = ESX.GetPlayers()
-		    for i= 1, #xPlayers do
-                local source = xPlayers[i]
-                local xPlayer = ESX.GetPlayerFromId(source)
-                if xPlayer.job.name == pData.recipientList[1] or xPlayer.job.name == pData.recipientList[2] then
-                    TriggerClientEvent('wf-alerts:clNotify', source, pData)
-                end
-            end
-            local n = [[
-
-]]
-            local details = pData.dispatchMessage
-            if pData.info then details = details .. n .. pData.info end
-            if pData.info2 then details = details .. n .. pData.info2 end
-            if pData.recipientList[1] == 'police' then TriggerEvent('mdt:newCall', details, pData.caller, vector3(pData.coords.x, pData.coords.y, pData.coords.z), false) end
+    local dispatchData
+    if dispatchCodes[pData.dispatchCode] ~= nil then dispatchData = dispatchCodes[pData.dispatchCode]
+    elseif pData.dispatchData ~= nil then dispatchData = pData.dispatchData end
+    pData.displayCode = dispatchData.displayCode
+    pData.dispatchMessage = dispatchData.description
+    pData.isImportant = dispatchData.isImportant
+    pData.recipientList = dispatchData.recipientList
+    if not pData.info then pData.info = dispatchData.info end
+    if not pData.info2 then pData.info2 = dispatchData.info2 end
+    pData.infoM = dispatchData.infoM
+    pData.infoM2 = dispatchData.infoM2
+    pData.length = dispatchData.length
+    Citizen.Wait(1500)
+    local xPlayers = ESX.GetPlayers()
+	for i= 1, #xPlayers do
+        local source = xPlayers[i]
+        local xPlayer = ESX.GetPlayerFromId(source)
+        if xPlayer.job.name == pData.recipientList[1] or xPlayer.job.name == pData.recipientList[2] then
+            TriggerClientEvent('wf-alerts:clNotify', source, pData)
         end
     end
+    local n = [[
+
+]]
+    local details = pData.dispatchMessage
+    if pData.info then details = details .. n .. pData.info end
+    if pData.info2 then details = details .. n .. pData.info2 end
+    if pData.recipientList[1] == 'police' then TriggerEvent('mdt:newCall', details, pData.caller, vector3(pData.coords.x, pData.coords.y, pData.coords.z), false) end
 end)
 
 
@@ -100,8 +99,8 @@ AddEventHandler('wf-alerts:svNotify911', function(message, caller, street, coord
     if message ~= nil then
         local pData = {}
         pData.displayCode = '911'
-        if caller == 'Unknown' then pData.dispatchMessage = 'Unknown caller' else
-        pData.dispatchMessage = 'Call from '..caller end
+        if caller == _U('caller_unknown') then pData.dispatchMessage = _U('unknown_caller') else
+        pData.dispatchMessage = _U('call_from') .. caller end
         pData.recipientList = {'police', 'ambulance'}
         pData.length = 6000
         pData.street = street

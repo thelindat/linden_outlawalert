@@ -3,6 +3,9 @@ Config.Speeding = {}
 Config.Shooting = {}
 Config.Autotheft = {}
 
+
+Config.Locale = 'fr'
+
 Config.Timer = {['Shooting'] = 0, ['Speeding'] = 0, ['Autotheft'] = 0}
 
 -- use phone_number instead of player name for 911 calls
@@ -15,7 +18,7 @@ Config.Default911 = false
 Config.Debug = true
 
 -- sets report chance to 100%
-Config.DebugChance = true
+Config.DebugChance = false
 
 
 -- set timers after performing a check
