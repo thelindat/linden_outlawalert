@@ -247,54 +247,56 @@ Citizen.CreateThread(function()
             if GetVehiclePedIsUsing(playerPed) ~= 0 and not IsPedInAnyHeli(playerPed) and not IsPedInAnyPlane(playerPed) and not IsPedInAnyTrain(playerPed) and not IsPedInAnyBoat(playerPed) then
                 local vehicle = GetVehiclePedIsUsing(playerPed, true)
                 local veh = vehicleData(GetVehiclePedIsUsing(playerPed, true))
+                if veh then
                     if Config.Timer['Shooting'] == 0 then
-                    if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
+                        if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
+                            if zoneChance('Shooting', playerCoords, currentStreetName) then
+                                data = {dispatchCode = 'driveby', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id, length = 6000,
+                                info = ('[%s] %s %s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
+                                TriggerServerEvent('wf-alerts:svNotify', data)
+                                Config.Timer['Shooting'] = Config.Shooting.Success
+                                sleep = 100
+                            else
+                                Config.Timer['Shooting'] = Config.Shooting.Fail
+                                sleep = 100
+                            end
+                        end
+                    end    
+                    if Config.Timer['Speeding'] == 0 and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(40,80)))) then
+                        if zoneChance('Speeding', playerCoords, currentStreetName) then
+                            if IsPedInAnyVehicle(playerPed, true) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
+                                playerCoords = GetEntityCoords(playerPed)
+                                data = {dispatchCode = 'speeding', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
+                                info = ('[%s] %s %s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
+                                TriggerServerEvent('wf-alerts:svNotify', data)
+                                Config.Timer['Speeding'] = Config.Speeding.Success
+                            end
+                        else
+                            Config.Timer['Speeding'] = Config.Speeding.Fail
+                        end
+                    end
+                    if Config.Timer['Autotheft'] == 0 and (IsPedTryingToEnterALockedVehicle(playerPed) or IsPedJacking(playerPed)) then
+                        ESX.TriggerServerCallback('linden_outlawalert:isVehicleOwned', function(hasowner) veh.owned = hasowner end, veh.plate)
+                        if not veh.owned then
+                            if zoneChance('Autotheft', playerCoords, currentStreetName) then
+                                data = {dispatchCode = 'autotheft', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
+                                info = ('[%s] %s %s'):format(veh.plate, veh.name..',', veh.class), info2 = veh.colour}
+                                TriggerServerEvent('wf-alerts:svNotify', data)
+                                Config.Timer['Autotheft'] = Config.Autotheft.Success
+                            else
+                                Config.Timer['Autotheft'] = Config.Autotheft.Fail
+                            end
+                        end
+                    end
+                else
+                    if Config.Timer['Shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
                         if zoneChance('Shooting', playerCoords, currentStreetName) then
-                            data = {dispatchCode = 'driveby', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id, length = 6000,
-                            info = ('[%s] %s %s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
+                            data = {dispatchCode = 'shooting', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
                             TriggerServerEvent('wf-alerts:svNotify', data)
                             Config.Timer['Shooting'] = Config.Shooting.Success
-                            sleep = 100
                         else
                             Config.Timer['Shooting'] = Config.Shooting.Fail
-                            sleep = 100
                         end
-                    end
-                end    
-                if Config.Timer['Speeding'] == 0 and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(40,80)))) then
-                    if zoneChance('Speeding', playerCoords, currentStreetName) then
-                        if IsPedInAnyVehicle(playerPed, true) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
-                            playerCoords = GetEntityCoords(playerPed)
-                            data = {dispatchCode = 'speeding', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
-                            info = ('[%s] %s %s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
-                            TriggerServerEvent('wf-alerts:svNotify', data)
-                            Config.Timer['Speeding'] = Config.Speeding.Success
-                        end
-                    else
-                        Config.Timer['Speeding'] = Config.Speeding.Fail
-                    end
-                end
-                if Config.Timer['Autotheft'] == 0 and (IsPedTryingToEnterALockedVehicle(playerPed) or IsPedJacking(playerPed)) then
-                    ESX.TriggerServerCallback('linden_outlawalert:isVehicleOwned', function(hasowner) veh.owned = hasowner end, veh.plate)
-                    if not veh.owned then
-                        if zoneChance('Autotheft', playerCoords, currentStreetName) then
-                            data = {dispatchCode = 'autotheft', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
-                            info = ('[%s] %s %s'):format(veh.plate, veh.name..',', veh.class), info2 = veh.colour}
-                            TriggerServerEvent('wf-alerts:svNotify', data)
-                            Config.Timer['Autotheft'] = Config.Autotheft.Success
-                        else
-                            Config.Timer['Autotheft'] = Config.Autotheft.Fail
-                        end
-                    end
-                end
-            else
-                if Config.Timer['Shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
-                    if zoneChance('Shooting', playerCoords, currentStreetName) then
-                        data = {dispatchCode = 'shooting', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
-                        TriggerServerEvent('wf-alerts:svNotify', data)
-                        Config.Timer['Shooting'] = Config.Shooting.Success
-                    else
-                        Config.Timer['Shooting'] = Config.Shooting.Fail
                     end
                 end
             end
