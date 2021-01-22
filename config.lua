@@ -25,6 +25,23 @@ config.shooting.fail = 0
 config.autotheft.success = 300
 config.autotheft.fail = 15
 
+config.WeaponBlacklist = {
+	'WEAPON_GRENADE',
+	'WEAPON_BZGAS',
+	'WEAPON_MOLOTOV',
+	'WEAPON_STICKYBOMB',
+	'WEAPON_PROXMINE',
+	'WEAPON_SNOWBALL',
+	'WEAPON_PIPEBOMB',
+	'WEAPON_BALL',
+	'WEAPON_SMOKEGRENADE',
+	'WEAPON_FLARE',
+	'WEAPON_PETROLCAN',
+	'WEAPON_FIREEXTINGUISHER',
+	'WEAPON_HAZARDCAN',
+	'WEAPON_RAYCARBINE',
+	'WEAPON_STUNGUN'
+}
 
 colours = {
     ['0'] = "Metallic Black",

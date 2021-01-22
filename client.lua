@@ -32,6 +32,16 @@ AddEventHandler('esx:setJob', function(job)
     isPlayerWhitelisted = refreshPlayerWhitelisted()
 end)
 
+function BlackListCheck(playerPed)
+    for i = 1, #config.WeaponBlacklist do
+        local weaponHash = GetHashKey(config.WeaponBlacklist[i])
+        if GetSelectedPedWeapon(playerPed) == weaponHash then
+            return false -- Is a blacklisted weapon
+        end
+    end
+    return true -- Is not a blacklisted weapon
+end
+
 RegisterNetEvent('mdt_outlawalert:SendAlert')
 AddEventHandler('mdt_outlawalert:SendAlert', function(data)
     Citizen.Wait(1500)
@@ -158,7 +168,7 @@ Citizen.CreateThread(function()
             if updateStreet == 3 then lastStreet = street updateStreet = 0 else updateStreet = updateStreet + 1 end
 
             if not IsPedInAnyVehicle(playerPed, 1) then
-                if config.timer['shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
+                if config.timer['shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and BlackListCheck(playerPed) then
                     if zoneChance('shooting', playerCoords, street) then
                         local netid = NetworkGetNetworkIdFromEntity(playerPed)
                         local data = {['code'] = '10-71', ['name'] = 'Discharge of a firearm', ['style'] = 'police', ['desc'] = nil, ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
@@ -219,7 +229,7 @@ Citizen.CreateThread(function()
 
 
                     if config.timer['shooting'] == 0 then
-                        if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
+                        if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and BlackListCheck(playerPed) then
                             if zoneChance('shooting', playerCoords, street) then
                                 local netid = NetworkGetNetworkIdFromEntity(vehicle)
                                 local data = {['code'] = '10-71b', ['name'] = 'Drive-by shooting', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
