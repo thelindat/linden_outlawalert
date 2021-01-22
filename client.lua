@@ -32,14 +32,14 @@ AddEventHandler('esx:setJob', function(job)
     isPlayerWhitelisted = refreshPlayerWhitelisted()
 end)
 
-function BlackListCheck(playerPed)
-    for i = 1, #config.WeaponBlacklist do
-        local weaponHash = GetHashKey(config.WeaponBlacklist[i])
+function BlacklistedWeapon(playerPed)
+    for i = 1, #Config.WeaponBlacklist do
+        local weaponHash = GetHashKey(Config.WeaponBlacklist[i])
         if GetSelectedPedWeapon(playerPed) == weaponHash then
-            return false -- Is a blacklisted weapon
+            return true -- Is a blacklisted weapon
         end
     end
-    return true -- Is not a blacklisted weapon
+    return false -- Is not a blacklisted weapon
 end
 
 RegisterNetEvent('mdt_outlawalert:SendAlert')
@@ -114,7 +114,7 @@ end
 
 function zoneChance(type, playerCoords, street)    
     local zoneMod, zone, zoneid, sendit = 0, GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)), GetZoneAtCoords(playerCoords.x, playerCoords.y, playerCoords.z), false
-    if config.debugchance then print('Sending it') return true else
+    if Config.DebugChance then print('Sending it') return true else
 
         if zoneMod == 0 then zoneMod = 3 end
         if type == speeding then zoneMod = zoneMod * 2 end
@@ -142,10 +142,10 @@ function zoneChance(type, playerCoords, street)
 
         local sum = math.random(1, zoneMod)
         if sum > 1 then
-            if config.debug then print('No report sent') end
+            if Config.Debug then print('No report sent') end
             sendit = false
         else
-            if config.debug then print(zoneMod.. ' ' ..zone.. ' ' ..type) end
+            if Config.Debug then print(zoneMod.. ' ' ..zone.. ' ' ..type) end
             sendit = true
         end
         return sendit
@@ -159,23 +159,23 @@ Citizen.CreateThread(function()
         Citizen.Wait(0)
         playerPed = PlayerPedId()
         playerCoords = GetEntityCoords(playerPed)
-        if (not isPlayerWhitelisted or config.debug) then
-            for k, v in pairs(config.timer) do
-                if v > 0 then config.timer[k] = v - 1 end
+        if (not isPlayerWhitelisted or Config.Debug) then
+            for k, v in pairs(Config.Timer) do
+                if v > 0 then Config.Timer[k] = v - 1 end
             end
-            if config.timer['shooting'] == 0 and IsPedArmed(playerPed, 4) then sleep = 20 else sleep = 100 end
+            if Config.Timer['shooting'] == 0 and IsPedArmed(playerPed, 4) then sleep = 20 else sleep = 100 end
             if updateStreet == 0 then street = GetStreetNameFromHashKey(GetStreetNameAtCoord(playerCoords.x, playerCoords.y, playerCoords.z)) end
             if updateStreet == 3 then lastStreet = street updateStreet = 0 else updateStreet = updateStreet + 1 end
 
             if not IsPedInAnyVehicle(playerPed, 1) then
-                if config.timer['shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and BlackListCheck(playerPed) then
+                if Config.Timer['shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
                     if zoneChance('shooting', playerCoords, street) then
                         local netid = NetworkGetNetworkIdFromEntity(playerPed)
                         local data = {['code'] = '10-71', ['name'] = 'Discharge of a firearm', ['style'] = 'police', ['desc'] = nil, ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
                         TriggerServerEvent('mdt:newCall', data.name, data.caller, vector3(data.loc.x, data.loc.y, data.loc.z), data)
-                        config.timer['shooting'] = config.shooting.success
+                        Config.Timer['shooting'] = Config.Shooting.Success
                     else
-                        config.timer['shooting'] = config.shooting.fail
+                        Config.Timer['shooting'] = Config.Shooting.Fail
                     end
                     Citizen.Wait(0)
                 end
@@ -228,47 +228,47 @@ Citizen.CreateThread(function()
                     elseif vehicleDoors == 4 then vehicleDoors = 'Four-door' end
 
 
-                    if config.timer['shooting'] == 0 then
-                        if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and BlackListCheck(playerPed) then
+                    if Config.Timer['shooting'] == 0 then
+                        if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and BlacklistedWeapon(playerPed) then
                             if zoneChance('shooting', playerCoords, street) then
                                 local netid = NetworkGetNetworkIdFromEntity(vehicle)
                                 local data = {['code'] = '10-71b', ['name'] = 'Drive-by shooting', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
                                 TriggerServerEvent('mdt:newCall', data.name, data.caller, vector3(data.loc.x, data.loc.y, data.loc.z), data)
-                                config.timer['shooting'] = config.shooting.success
+                                Config.Timer['shooting'] = Config.Shooting.Success
                                 sleep = 100
                             else
-                                config.timer['shooting'] = config.shooting.fail
+                                Config.Timer['shooting'] = Config.Shooting.Fail
                                 sleep = 100
                             end
                             Citizen.Wait(0)
                         end
                     end
                         
-                    if config.timer['speeding'] == 0 and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(40,80)))) then
+                    if Config.Timer['speeding'] == 0 and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(40,80)))) then
                         if zoneChance('speeding', playerCoords, street) then
                             local netid = NetworkGetNetworkIdFromEntity(vehicle)
                             if IsPedInAnyVehicle(playerPed, 1) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
                                 playerCoords = GetEntityCoords(playerPed)
                                 local data = {['code'] = '505', ['name'] = 'Reckless driving', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['desc2'] = ('%s%s'):format('<i class="fas fa-palette"></i>', vehicleColour), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '5000', ['caller'] = 'Local'}
                                 TriggerServerEvent('mdt:newCall', data.name, data.caller, vector3(data.loc.x, data.loc.y, data.loc.z), data)
-                                config.timer['speeding'] = config.speeding.success
+                                Config.Timer['speeding'] = Config.Speeding.Success
                             end
                         else
-                            config.timer['speeding'] = config.speeding.fail
+                            Config.Timer['speeding'] = Config.Speeding.Fail
                         end
                         Citizen.Wait(0)
                     end
-                    if config.timer['autotheft'] == 0 and (IsPedTryingToEnterALockedVehicle(playerPed) or IsPedJacking(playerPed)) then
+                    if Config.Timer['Autotheft'] == 0 and (IsPedTryingToEnterALockedVehicle(playerPed) or IsPedJacking(playerPed)) then
                         local plate = ESX.Math.Trim(GetVehicleNumberPlateText(vehicle))
                         ESX.TriggerServerCallback('mdt_outlawalert:isVehicleOwned', function(hasowner)
                             if not hasowner then
-                                if zoneChance('autotheft', playerCoords, street) then
+                                if zoneChance('Autotheft', playerCoords, street) then
                                     local netid = NetworkGetNetworkIdFromEntity(vehicle)
                                     local data = {['code'] = '503', ['name'] = 'Theft of a motor vehicle', ['style'] = 'police', ['desc'] = ('[%s] %s'):format(plate, vehicleName), ['desc2'] = ('%s%s'):format('<i class="fas fa-palette"></i>', vehicleColour), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '5000', ['caller'] = 'Local'}
                                         TriggerServerEvent('mdt:newCall', data.name, data.caller, vector3(data.loc.x, data.loc.y, data.loc.z), data)
-                                    config.timer['autotheft'] = config.autotheft.success
+                                    Config.Timer['Autotheft'] = Config.Autotheft.Success
                                 else
-                                    config.timer['autotheft'] = config.autotheft.fail
+                                    Config.Timer['Autotheft'] = Config.Autotheft.Fail
                                 end
                             end
                         end, plate)
@@ -282,7 +282,7 @@ Citizen.CreateThread(function()
 end)
 
 AddEventHandler('esx:onPlayerDeath', function(reason)
-    if isPlayerWhitelisted or config.debug then
+    if isPlayerWhitelisted or Config.Debug then
         local netid = NetworkGetNetworkIdFromEntity(playerPed)
         Citizen.Wait(2000)
         local data = {['code'] = '10-69', ['name'] = 'Officer is down', ['style'] = 'officer-down', ['desc'] = ('%s %s'):format(rank, lastname), ['netid'] = netid, ['loc'] = playerCoords, ['length'] = '15000', ['caller'] = name}
@@ -296,7 +296,7 @@ Citizen.CreateThread(function()
 	if GetResourceState('mdt') == 'started' or GetResourceState('mdt') == 'starting' then
 		RegisterCommand('911', function(playerId, args, rawCommand)
 			args = table.concat(args, ' ')
-			if config.phone_number then caller = phone else caller = ('%s %s'):format(firstname, lastname) end
+			if Config.PhoneNumber then caller = phone else caller = ('%s %s'):format(firstname, lastname) end
 			TriggerServerEvent('mdt:newCall', args, caller, vector3(playerCoords.x, playerCoords.y, playerCoords.z))
 		end, false)
 
