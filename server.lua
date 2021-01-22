@@ -33,13 +33,31 @@ end)
 -- ESX Framework Stuff ---------------------------------------------------------------
 
 local dispatchCodes = {
+
     fight = { displayCode = '10-10', description = 'Fight in progress', isImportant = 0, recipientList = {'police', 'ambulance'} },
-    officerdown = {displayCode = '10-69', description = 'Officer is down', isImportant = 1, recipientList = {'police', 'ambulance'}},
-    autotheft = {displayCode = '503', description = 'Theft of a motor vehicle', isImportant = 0, recipientList = {'police'}},
-    speeding = {displayCode = '505', description = 'Reckless driving', isImportant = 0, recipientList = {'police'} },
+
+    officerdown = {displayCode = '10-69', description = 'Officer is down', isImportant = 1, recipientList = {'police', 'ambulance'},
+    infoM = 'fa-portrait'},
+
+    autotheft = {displayCode = '503', description = 'Theft of a motor vehicle', isImportant = 0, recipientList = {'police'},
+    infoM = 'fa-car', infoM2 = 'fa-palette' },
+
+    speeding = {displayCode = '505', description = 'Reckless driving', isImportant = 0, recipientList = {'police'},
+    infoM = 'fa-car', infoM2 = 'fa-palette' },
+
     shooting = { displayCode = '10-71', description = 'Discharge of a firearm', isImportant = 0, recipientList = {'police', 'ambulance'} },
-    driveby = { displayCode = '10-71b', description = 'Drive-by shooting', isImportant = 0, recipientList = {'police', 'ambulance'} },
+
+    driveby = { displayCode = '10-71b', description = 'Drive-by shooting', isImportant = 0, recipientList = {'police', 'ambulance'},
+    infoM = 'fa-car', infoM2 = 'fa-palette' },
+
+    vangelico = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000',
+    infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'},
 }
+
+--[[RegisterCommand('testvangelico', function(playerId, args, rawCommand)
+    data = {dispatchCode = 'vangelico', caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
+    TriggerEvent('wf-alerts:svNotify', data)
+end, false)]]
 
 
 RegisterServerEvent('wf-alerts:svNotify')
@@ -51,7 +69,11 @@ AddEventHandler('wf-alerts:svNotify', function(pData)
             pData.dispatchMessage = dispatchData.description
             pData.isImportant = dispatchData.isImportant
             pData.recipientList = dispatchData.recipientList
-
+            if not pData.info then pData.info = dispatchData.info end
+            if not pData.info2 then pData.info2 = dispatchData.info2 end
+            pData.infoM = dispatchData.infoM
+            pData.infoM2 = dispatchData.infoM2
+            pData.length = dispatchData.length
             local xPlayers = ESX.GetPlayers()
 		    for i= 1, #xPlayers do
                 local source = xPlayers[i]
@@ -60,7 +82,13 @@ AddEventHandler('wf-alerts:svNotify', function(pData)
                     TriggerClientEvent('wf-alerts:clNotify', source, pData)
                 end
             end
-            if pData.recipientList[1] == 'police' then TriggerEvent('mdt:newCall', pData.dispatchMessage, pData.caller, vector3(pData.coords.x, pData.coords.y, pData.coords.z), false) end
+            local n = [[
+
+]]
+            local details = pData.dispatchMessage
+            if pData.info then details = details .. n .. pData.info end
+            if pData.info2 then details = details .. n .. pData.info2 end
+            if pData.recipientList[1] == 'police' then TriggerEvent('mdt:newCall', details, pData.caller, vector3(pData.coords.x, pData.coords.y, pData.coords.z), false) end
         end
     end
 end)

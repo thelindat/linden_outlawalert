@@ -121,19 +121,21 @@ AddEventHandler('wf-alerts:clNotify', function(pData)
         SendNUIMessage({action = 'display', info = pData, job = ESX.PlayerData.job.name, length = pData.length})
         PlaySound(-1, "Event_Start_Text", "GTAO_FM_Events_Soundset", 0, 0, 1)
 
-        local alpha = 255
-        local entId = NetworkGetEntityFromNetworkId(pData.netId)
-        local blipOne = AddBlipForEntity(entId)
-        SetBlipSprite(blipOne,161)
-        SetBlipHighDetail(blipOne, true)
-        SetBlipScale(blipOne, 1.0)
-        SetBlipColour(blipOne, 28)
-        SetBlipAlpha(blipOne, alpha)
-        SetBlipAsShortRange(blipOne, false)
-        SetBlipCategory(blipOne, 2)
-        Citizen.Wait(pData.length)
-        RemoveBlip(blipOne)
-        local blipTwo = AddBlipForCoord(GetEntityCoords(entId))
+        local alpha, blipOne, blipTwo = 255
+        if pData.netid then
+            local entId = NetworkGetEntityFromNetworkId(pData.netId)
+            local blipOne = AddBlipForEntity(entId)
+            SetBlipSprite(blipOne,161)
+            SetBlipHighDetail(blipOne, true)
+            SetBlipScale(blipOne, 1.0)
+            SetBlipColour(blipOne, 28)
+            SetBlipAlpha(blipOne, alpha)
+            SetBlipAsShortRange(blipOne, false)
+            SetBlipCategory(blipOne, 2)
+            Citizen.Wait(pData.length)
+            RemoveBlip(blipOne)
+            blipTwo = AddBlipForCoord(GetEntityCoords(entId))
+        else blipTwo = AddBlipForCoord(pData.coords) end
         SetBlipSprite(blipTwo,161)
         SetBlipHighDetail(blipTwo, true)
         SetBlipScale(blipTwo, 1.0)
@@ -142,7 +144,7 @@ AddEventHandler('wf-alerts:clNotify', function(pData)
         SetBlipAsShortRange(blipTwo, true)
         SetBlipCategory(blipTwo, 2)
         while alpha ~= 0 do
-            Citizen.Wait((pData.length / 1000) * 5)
+            if pData.netid then Citizen.Wait((pData.length / 1000) * 5) else Citizen.Wait((pData.length / 1000) * 20) end
             alpha = alpha - 1
             SetBlipAlpha(blipTwo, alpha)
     
@@ -197,9 +199,8 @@ Citizen.CreateThread(function()
                 if Config.Timer['Shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
                     if zoneChance('Shooting', playerCoords, currentStreetName) then
                         local netId = NetworkGetNetworkIdFromEntity(playerPed)
-                        data = {dispatchCode = 'shooting', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId}
+                        data = {dispatchCode = 'shooting', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId, length = 6000}
                         TriggerServerEvent('wf-alerts:svNotify', data)
-                        --local data = {['code'] = '10-71', ['name'] = 'Discharge of a firearm', ['style'] = 'police', ['desc'] = nil, ['netId'] = netId, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
                         Config.Timer['Shooting'] = Config.Shooting.Success
                     else
                         Config.Timer['Shooting'] = Config.Shooting.Fail
@@ -259,9 +260,9 @@ Citizen.CreateThread(function()
                         if IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
                             if zoneChance('Shooting', playerCoords, currentStreetName) then
                                 local netId = NetworkGetNetworkIdFromEntity(vehicle)
-                                data = {dispatchCode = 'driveby', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId}
+                                data = {dispatchCode = 'driveby', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId, length = 6000,
+                                info = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), info2 = vehicleColour}
                                 TriggerServerEvent('wf-alerts:svNotify', data)
-                                --local data = {['code'] = '10-71b', ['name'] = 'Drive-by shooting', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['netId'] = netId, ['loc'] = playerCoords, ['length'] = '8000', ['caller'] = 'Local'}
                                 Config.Timer['Shooting'] = Config.Shooting.Success
                                 sleep = 100
                             else
@@ -277,9 +278,9 @@ Citizen.CreateThread(function()
                             local netId = NetworkGetNetworkIdFromEntity(vehicle)
                             if IsPedInAnyVehicle(playerPed, 1) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
                                 playerCoords = GetEntityCoords(playerPed)
-                                data = {dispatchCode = 'speeding', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId}
+                                data = {dispatchCode = 'speeding', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId,
+                                info = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), info2 = vehicleColour}
                                 TriggerServerEvent('wf-alerts:svNotify', data)
-                                --local data = {['code'] = '505', ['name'] = 'Reckless driving', ['style'] = 'police', ['desc'] = ('[%s] %s %s'):format(plate, vehicleDoors, vehicleClass), ['desc2'] = ('%s%s'):format('<i class="fas fa-palette"></i>', vehicleColour), ['netId'] = netId, ['loc'] = playerCoords, ['length'] = '5000', ['caller'] = 'Local'}
                                 Config.Timer['Speeding'] = Config.Speeding.Success
                             end
                         else
@@ -293,9 +294,9 @@ Citizen.CreateThread(function()
                             if not hasowner then
                                 if zoneChance('Autotheft', playerCoords, currentStreetName) then
                                     local netId = NetworkGetNetworkIdFromEntity(vehicle)
-                                    data = {dispatchCode = 'autotheft', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId}
+                                    data = {dispatchCode = 'autotheft', caller = 'Local', street = playerStreetsLocation, coords = playerCoords, netId = netId,
+                                    info = ('[%s] %s %s'):format(plate, vehicleName..',', vehicleClass), info2 = vehicleColour}
                                     TriggerServerEvent('wf-alerts:svNotify', data)
-                                    -- local data = {['code'] = '503', ['name'] = 'Theft of a motor vehicle', ['style'] = 'police', ['desc'] = ('[%s] %s'):format(plate, vehicleName), ['desc2'] = ('%s%s'):format('<i class="fas fa-palette"></i>', vehicleColour), ['netId'] = netId, ['loc'] = playerCoords, ['length'] = '5000', ['caller'] = 'Local'}
                                     Config.Timer['Autotheft'] = Config.Autotheft.Success
                                 else
                                     Config.Timer['Autotheft'] = Config.Autotheft.Fail
@@ -317,7 +318,7 @@ AddEventHandler('esx:onPlayerDeath', function(reason)
         local name = ('%s %s'):format(rank, lastname)
         GetTheStreet()
         Citizen.Wait(2000)
-        data = {dispatchCode = 'officerdown', caller = name, street = playerStreetsLocation, coords = playerCoords, netId = netId}
+        data = {dispatchCode = 'officerdown', caller = name, street = playerStreetsLocation, coords = playerCoords, netId = netId, info = name}
         TriggerServerEvent('wf-alerts:svNotify', data)
         Citizen.Wait(15000)
     end

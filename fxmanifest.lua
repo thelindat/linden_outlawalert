@@ -2,7 +2,6 @@ fx_version 'cerulean'
 game 'gta5'
 
 version '2.0.0'
-description "WF_Alerts and Hypaste MDT integration"
 
 client_scripts {
    'client.lua'
