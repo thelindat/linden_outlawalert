@@ -4,7 +4,7 @@ Config.Shooting = {}
 Config.Autotheft = {}
 
 
-Config.Locale = 'fr'
+Config.Locale = 'en'
 
 Config.Timer = {['Shooting'] = 0, ['Speeding'] = 0, ['Autotheft'] = 0}
 
@@ -18,7 +18,7 @@ Config.Default911 = false
 Config.Debug = true
 
 -- sets report chance to 100%
-Config.DebugChance = false
+Config.DebugChance = true
 
 
 -- set timers after performing a check
