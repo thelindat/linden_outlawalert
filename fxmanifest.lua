@@ -1,17 +1,19 @@
 fx_version 'cerulean'
 game 'gta5'
 
-version '1.0.5'
+version '2.0.0'
+description "WF_Alerts and Hypaste MDT integration"
 
-server_scripts {
-	'@mysql-async/lib/MySQL.lua',
-	'server.lua',
+client_scripts {
+   'client.lua'
 }
 
-
-client_script 'client.lua'
-
 shared_script 'config.lua'
+
+server_scripts {
+    '@mysql-async/lib/MySQL.lua',
+    'server.lua'
+}
 
 ui_page {
     'html/alerts.html',

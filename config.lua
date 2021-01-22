@@ -43,7 +43,7 @@ Config.WeaponBlacklist = {
 	'WEAPON_STUNGUN'
 }
 
-colours = {
+Config.Colours = {
     ['0'] = "Metallic Black",
     ['1'] = "Metallic Graphite Black",
     ['2'] = "Metallic Black Steel",
