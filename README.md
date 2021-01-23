@@ -4,9 +4,15 @@ Intended for use with [ESX] Hypaste RP’s Mobile Data Terminal by distritic, bu
 Note: If upgrading from v1 you will need to update the mdt:newCall event once again. Any custom alerts will also need updating.
 
 
-### Instructions
-  Download and setup Hypaste RP's MDT (link in credits)  
-  Open mdt/sv_mdt.lua and locate RegisterServerEvent("mdt:newCall"), replace with:  
+# Instructions
+Download either the latest release or the latest repo. Just drag and drop.  
+Ensure you set Config.Debug to false so cops don't trigger a bunch of warnings, and to disable debug information printing into the console.  
+If you want 100% report chance then leave Config.DebugChance, though I recommend disabling it.  
+[Share any feedback on the thread](https://forum.cfx.re/t/esx-outlawalert-wildfire-alerts-and-hypaste-mdt-integration/)
+
+### Optional
+Download and setup Hypaste RP's MDT (link in credits)  
+Open mdt/sv_mdt.lua and locate RegisterServerEvent("mdt:newCall"), replace with:  
   ```
 RegisterServerEvent("mdt:newCall")
 AddEventHandler("mdt:newCall", function(details, caller, coords, sendNotification)
@@ -25,12 +31,13 @@ AddEventHandler("mdt:newCall", function(details, caller, coords, sendNotificatio
   end
 end)
 ```  
-### Custom alerts  
+
+## Custom alerts  
 For example, if we were to edit one of the jewelry heist scripts, you can replace the default method for alerting the police with the following
 ```
-    local data = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000', infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'}
-    local dispatchData = {dispatchData = data, caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
-    TriggerEvent('wf-alerts:svNotify', dispatchData)
+local data = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000', infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'}
+local dispatchData = {dispatchData = data, caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
+TriggerEvent('wf-alerts:svNotify', dispatchData)
 ```
 You can define infoM2 and info2 for an additional line of text. If you are triggering the event from a client make sure you use TriggerServerEvent.
 
