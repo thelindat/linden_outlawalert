@@ -169,7 +169,7 @@ AddEventHandler('wf-alerts:clNotify', function(pData)
         PlaySound(-1, "Event_Start_Text", "GTAO_FM_Events_Soundset", 0, 0, 1)
 
         local alpha, blipOne, blipTwo = 255
-        if pData.netid then
+        if pData.netId then
             local entId = NetworkGetEntityFromNetworkId(pData.netId)
             local blipOne = AddBlipForEntity(entId)
             SetBlipSprite(blipOne,161)
