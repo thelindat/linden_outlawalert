@@ -263,15 +263,15 @@ Citizen.CreateThread(function()
                             end
                         end
                     end
-                else
-                    if Config.Timer['Shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
-                        if zoneChance('Shooting', playerCoords, currentStreetName) then
-                            data = {dispatchCode = 'shooting', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
-                            TriggerServerEvent('wf-alerts:svNotify', data)
-                            Config.Timer['Shooting'] = Config.Shooting.Success
-                        else
-                            Config.Timer['Shooting'] = Config.Shooting.Fail
-                        end
+                end
+            else
+                if Config.Timer['Shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
+                    if zoneChance('Shooting', playerCoords, currentStreetName) then
+                        data = {dispatchCode = 'shooting', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
+                        TriggerServerEvent('wf-alerts:svNotify', data)
+                        Config.Timer['Shooting'] = Config.Shooting.Success
+                    else
+                        Config.Timer['Shooting'] = Config.Shooting.Fail
                     end
                 end
             end
