@@ -23,6 +23,7 @@ Locales['fr'] = {
     ['service'] = "Véhicule de service",
     ['military'] = "Véhicule militaire",
     ['truck'] = "un camion",
+    ['melee'] = "Combat en cours",
     ['shooting'] = "Décharge d'une arme à feu",
     ['driveby'] = "Prise de vue au volant",
     ['speeding'] = "Conduite dangereuse",

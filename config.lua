@@ -1,12 +1,11 @@
 Config = {}
-Config.Speeding = {}
-Config.Shooting = {}
-Config.Autotheft = {}
-
+Config.Enable = {}
+Config.Loaded = false
+Config.Timer = {}
 
 Config.Locale = 'en'
-
-Config.Timer = {['Shooting'] = 0, ['Speeding'] = 0, ['Autotheft'] = 0}
+Config.CheckVersion = true
+Config.CheckVersionDelay = 60 -- Minutes
 
 -- use phone_number instead of player name for 911 calls
 Config.PhoneNumber = true
@@ -21,15 +20,31 @@ Config.Debug = true
 Config.DebugChance = true
 
 
--- set timers after performing a check
-Config.Speeding.Success = 300 -- 30 seconds
-Config.Speeding.Fail = 20 -- 2 seconds
+Config.Enable.Speeding = false
+Config.Enable.Shooting = true
+Config.Enable.Autotheft = true
+Config.Enable.Melee = true
 
-Config.Shooting.Success = 150
-Config.Shooting.Fail = 0
 
-Config.Autotheft.Success = 300
-Config.Autotheft.Fail = 15
+
+Citizen.CreateThread(function()
+    if not Config.Loaded then
+        for k, v in pairs(Config.Enable) do
+            Config[k] = {}
+            Config.Timer[k] = 0 -- Default to 0 seconds
+            Config[k].Success = 300 -- Default to 30 seconds
+            Config[k].Fail = 20 -- Default to 2 seconds
+        end
+        -- If you want to set specific timers, do it here
+        Config.Shooting.Success = 150
+        Config.Shooting.Fail = 0
+        
+        Config.Loaded = true
+    end
+end)
+
+
+
 
 Config.WeaponBlacklist = {
 	'WEAPON_GRENADE',

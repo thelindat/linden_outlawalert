@@ -34,7 +34,7 @@ end)
 
 local dispatchCodes = {
 
-    fight = { displayCode = '10-10', description = _U('fight'), isImportant = 0, recipientList = {'police', 'ambulance'} },
+    melee = { displayCode = '10-10', description = _U('melee'), isImportant = 0, recipientList = {'police', 'ambulance'} },
 
     officerdown = {displayCode = '10-69', description = _U('officerdown'), isImportant = 1, recipientList = {'police', 'ambulance'},
     infoM = 'fa-portrait'},
@@ -115,5 +115,40 @@ AddEventHandler('wf-alerts:svNotify911', function(message, caller, street, coord
             end
         end
         TriggerEvent('mdt:newCall', message, caller, vector3(coords.x, coords.y, coords.z), false)
+    end
+end)
+
+
+-- VERSION CHECK
+CreateThread(function()
+    local resourceName, currentVersion, latestVersion = GetCurrentResourceName()
+    local resourceManifest = LoadResourceFile(resourceName, 'fxmanifest.lua')
+    local outdated = '^7[%s]^3 Version ^2%s^3 is available! You are using version ^1%s^7'
+    Citizen.Wait(3000)
+    while Config.CheckVersion do
+        Citizen.Wait(0)
+        if currentVersion == nil then
+            local data, version = tostring(resourceManifest)
+            for line in data:gmatch("([^\n]*)\n?") do
+                if line:find('^version') then version = line:sub(10, (line:len(line) - 1)) break end
+            end
+            currentVersion = version
+        else
+            PerformHttpRequest("https://raw.githubusercontent.com/thelindat/linden_outlawalert/master/fxmanifest.lua", function (errorCode, resultData, resultHeaders)
+                if errorCode ~= 200 then print("Returned error code:" .. tostring(errorCode)) else
+                    local data, version = tostring(resultData)
+                    for line in data:gmatch("([^\n]*)\n?") do
+                        if line:find('^version') then version = line:sub(10, (line:len(line) - 1)) break end
+                    end         
+                    latestVersion = version
+                end
+            end)
+            if latestVersion then 
+                if currentVersion ~= latestVersion then
+                    print(outdated:format(resourceName, latestVersion, currentVersion))
+                end
+                Citizen.Wait(60000*Config.CheckVersionDelay)
+            end
+        end
     end
 end)

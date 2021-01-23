@@ -205,7 +205,8 @@ end)
 
 Citizen.CreateThread(function()
     local sleep = 100
-	while true do
+    Citizen.Wait(1000)
+	while Config.Loaded do
         Citizen.Wait(0)
         playerPed = PlayerPedId()
         playerCoords = GetEntityCoords(playerPed)
@@ -264,7 +265,7 @@ Citizen.CreateThread(function()
                         end
                     end
                 end
-            else
+            else -- Any non-vehicle related crimes go below here
                 if Config.Timer['Shooting'] == 0 and IsPedShooting(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) and not BlacklistedWeapon(playerPed) then
                     if zoneChance('Shooting', playerCoords, currentStreetName) then
                         data = {dispatchCode = 'shooting', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
@@ -272,6 +273,15 @@ Citizen.CreateThread(function()
                         Config.Timer['Shooting'] = Config.Shooting.Success
                     else
                         Config.Timer['Shooting'] = Config.Shooting.Fail
+                    end
+                end
+                if Config.Timer['Melee'] == 0 and IsPedInMeleeCombat(playerPed) then
+                    if zoneChance('Melee', playerCoords, currentStreetName) then
+                        data = {dispatchCode = 'melee', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 4000}
+                        TriggerServerEvent('wf-alerts:svNotify', data)
+                        Config.Timer['Melee'] = Config.Melee.Success
+                    else
+                        Config.Timer['Melee'] = Config.Melee.Fail
                     end
                 end
             end

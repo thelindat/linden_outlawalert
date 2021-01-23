@@ -22,6 +22,7 @@ Locales['en'] = {
     ['service'] = "Service vehicle",
     ['military'] = "Military vehicle",
     ['truck'] = "Truck",
+    ['melee'] = "Fight in progress",
     ['shooting'] = "Discharge of a firearm",
     ['driveby'] = "Drive-by shooting",
     ['speeding'] = "Reckless driving",
