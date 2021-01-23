@@ -121,7 +121,6 @@ function vehicleData(vehicle)
     local vehicleClass = GetVehicleClass(vehicle)
     local vClass = {[0] = _U('compact'), [1] = _U('sedan'), [2] = _U('suv'), [3] = _U('coupe'), [4] = _U('muscle'), [5] = _U('sports_classic'), [6] = _U('sports'), [7] = _U('super'), [8] = _U('motorcycle'), [9] = _U('offroad'), [10] = _U('industrial'), [11] = _U('utility'), [12] = _U('van'), [17] = _U('service'), [19] = _U('military'), [20] = _U('truck')}
     local vehicleClass = vClass[vehicleClass]
-    print(vehicleClass)
     if vehicleClass then
         local vehicleName = GetLabelText(GetDisplayNameFromVehicleModel(GetEntityModel(vehicle)))
         local vehicleColour1, vehicleColour2 = GetVehicleColours(vehicle)
