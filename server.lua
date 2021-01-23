@@ -34,21 +34,23 @@ end)
 
 local dispatchCodes = {
 
-    melee = { displayCode = '10-10', description = _U('melee'), isImportant = 0, recipientList = {'police', 'ambulance'} },
+    melee = { displayCode = '10-10', description = _U('melee'), isImportant = 0, recipientList = {'police', 'ambulance'},
+    blipSprite = 311, blipColour = 84, blipScale = 1.5 },
 
     officerdown = {displayCode = '10-69', description = _U('officerdown'), isImportant = 1, recipientList = {'police', 'ambulance'},
-    infoM = 'fa-portrait'},
+    blipSprite = 303, blipColour = 84, blipScale = 1.5, infoM = 'fa-portrait'},
 
     autotheft = {displayCode = '503', description = _U('autotheft'), isImportant = 0, recipientList = {'police'},
-    infoM = 'fa-car', infoM2 = 'fa-palette' },
+    blipSprite = 225, blipColour = 84, blipScale = 1.5, infoM = 'fa-car', infoM2 = 'fa-palette' },
 
     speeding = {displayCode = '505', description = _U('speeding'), isImportant = 0, recipientList = {'police'},
-    infoM = 'fa-car', infoM2 = 'fa-palette' },
+    blipSprite = 380, blipColour = 84, blipScale = 1.5, infoM = 'fa-car', infoM2 = 'fa-palette' },
 
-    shooting = { displayCode = '10-71', description = _U('shooting'), isImportant = 0, recipientList = {'police', 'ambulance'} },
+    shooting = { displayCode = '10-71', description = _U('shooting'), isImportant = 0, recipientList = {'police', 'ambulance'},
+    blipSprite = 156, blipColour = 84, blipScale = 1.5 },
 
     driveby = { displayCode = '10-71b', description = _U('driveby'), isImportant = 0, recipientList = {'police', 'ambulance'},
-    infoM = 'fa-car', infoM2 = 'fa-palette' },
+    blipSprite = 229, blipColour = 84, blipScale = 1.5, infoM = 'fa-car', infoM2 = 'fa-palette' },
 }
 
 
@@ -74,6 +76,9 @@ AddEventHandler('wf-alerts:svNotify', function(pData)
     pData.infoM = dispatchData.infoM
     pData.infoM2 = dispatchData.infoM2
     pData.length = dispatchData.length
+    pData.sprite = dispatchData.blipSprite
+    pData.colour = dispatchData.blipColour
+    pData.scale = dispatchData.blipScale
     Citizen.Wait(1500)
     local xPlayers = ESX.GetPlayers()
 	for i= 1, #xPlayers do
@@ -106,6 +111,7 @@ AddEventHandler('wf-alerts:svNotify911', function(message, caller, street, coord
         pData.infoM = 'fa-phone'
         pData.info = message
         pData.coords = coords
+        pData.sprite, pData.colour, pData.scale =  480, 84, 2.0 -- radar_vip, blue
         local xPlayers = ESX.GetPlayers()
 		for i= 1, #xPlayers do
             local source = xPlayers[i]
