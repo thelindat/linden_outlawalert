@@ -28,5 +28,6 @@ Locales['fr'] = {
     ['driveby'] = "Prise de vue au volant",
     ['speeding'] = "Conduite dangereuse",
     ['autotheft'] = "Vol d'un véhicule à moteur",
-    ['officerdown'] = "L'officier est à terre",
+    ['officerdown'] = "Officier est à terre",
+    ['persondown'] = "Personne est blessée",
 }

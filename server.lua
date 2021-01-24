@@ -34,23 +34,26 @@ end)
 
 local dispatchCodes = {
 
-    melee = { displayCode = '10-10', description = _U('melee'), isImportant = 0, recipientList = {'police', 'ambulance'},
+    melee = { displayCode = '242', description = _U('melee'), isImportant = 0, recipientList = {'police', 'ambulance'},
     blipSprite = 311, blipColour = 84, blipScale = 1.5 },
 
-    officerdown = {displayCode = '10-69', description = _U('officerdown'), isImportant = 1, recipientList = {'police', 'ambulance'},
-    blipSprite = 303, blipColour = 84, blipScale = 1.5, infoM = 'fa-portrait'},
+    officerdown = {displayCode = '10-99', description = _U('officerdown'), isImportant = 1, recipientList = {'police', 'ambulance'},
+    blipSprite = 526, blipColour = 84, blipScale = 1.5, infoM = 'fa-portrait'},
+
+    persondown = {displayCode = '10-53', description = _U('persondown'), isImportant = 0, recipientList = {'police', 'ambulance'},
+    blipSprite = 153, blipColour = 84, blipScale = 1.5, infoM = 'fa-portrait'},
 
     autotheft = {displayCode = '503', description = _U('autotheft'), isImportant = 0, recipientList = {'police'},
-    blipSprite = 225, blipColour = 84, blipScale = 1.5, infoM = 'fa-car', infoM2 = 'fa-palette' },
+    blipSprite = 227, blipColour = 84, blipScale = 1.5, infoM = 'fa-car', infoM2 = 'fa-palette' },
 
     speeding = {displayCode = '505', description = _U('speeding'), isImportant = 0, recipientList = {'police'},
-    blipSprite = 380, blipColour = 84, blipScale = 1.5, infoM = 'fa-car', infoM2 = 'fa-palette' },
+    blipSprite = 483, blipColour = 84, blipScale = 1.5, infoM = 'fa-car', infoM2 = 'fa-palette' },
 
     shooting = { displayCode = '10-71', description = _U('shooting'), isImportant = 0, recipientList = {'police', 'ambulance'},
     blipSprite = 156, blipColour = 84, blipScale = 1.5 },
 
     driveby = { displayCode = '10-71b', description = _U('driveby'), isImportant = 0, recipientList = {'police', 'ambulance'},
-    blipSprite = 229, blipColour = 84, blipScale = 1.5, infoM = 'fa-car', infoM2 = 'fa-palette' },
+    blipSprite = 380, blipColour = 84, blipScale = 1.5, infoM = 'fa-car', infoM2 = 'fa-palette' },
 }
 
 

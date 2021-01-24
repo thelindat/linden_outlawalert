@@ -141,7 +141,7 @@ end
 
 function createBlip(data)
     local alpha, blip = 255
-    local sprite, colour, scale = 161, 28, 1.0
+    local sprite, colour, scale = 161, 84, 1.0
     if data.sprite then sprite = data.sprite end
     if data.colour then colour = data.colour end
     if data.scale then scale = data.scale end
@@ -285,7 +285,8 @@ Citizen.CreateThread(function()
                         Config.Timer['Shooting'] = Config.Shooting.Fail
                     end
                 else sleep = 100 end
-                if Config.Timer['Melee'] == 0 and IsPedInMeleeCombat(playerPed) and IsControlJustReleased(0, 24) then
+                if Config.Timer['Melee'] == 0 and IsPedInMeleeCombat(playerPed) then -- TODO: detect when punching a ped, currently just detects player in combat stance
+                    sleep = 10
                     if zoneChance('Melee', playerCoords, currentStreetName) then
                         data = {dispatchCode = 'melee', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 4000}
                         TriggerServerEvent('wf-alerts:svNotify', data)
@@ -293,7 +294,7 @@ Citizen.CreateThread(function()
                     else
                         Config.Timer['Melee'] = Config.Melee.Fail
                     end
-                end
+                else sleep = 100 end
             end
         end
         Citizen.Wait(sleep)
@@ -301,22 +302,26 @@ Citizen.CreateThread(function()
 end)
 
 AddEventHandler('esx:onPlayerDeath', function(reason)
-    if isPlayerWhitelisted or Config.Debug then
-        local netId = NetworkGetNetworkIdFromEntity(playerPed)
-        local name = ('%s %s'):format(firstname, lastname)
-        local title = ('%s %s'):format(rank, lastname)
-        pedLocation(GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)))
+    local netId = NetworkGetNetworkIdFromEntity(playerPed)
+    local name = ('%s %s'):format(firstname, lastname)
+    local title = ('%s %s'):format(rank, lastname)
+    pedLocation(GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)))
+    if isPlayerWhitelisted then
         Citizen.Wait(2000)
         data = {dispatchCode = 'officerdown', caller = name, street = playerStreetsLocation, coords = playerCoords, netId = netId, info = title}
         TriggerServerEvent('wf-alerts:svNotify', data)
-        Citizen.Wait(15000)
+    elseif Config.Enable.PlayerDowned then
+        Citizen.Wait(2000)
+        data = {dispatchCode = 'persondown', _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = netId}
+        TriggerServerEvent('wf-alerts:svNotify', data)
     end
+    Citizen.Wait(15000)
 end)
 
 Citizen.CreateThread(function()
     RegisterCommand('911', function(playerId, args, rawCommand)
         args = table.concat(args, ' ')
-        pedLocation(GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)))
+        pedLocation(GetLabelText(GetNameOfZone(playewwwwwwrCoords.x, playerCoords.y, playerCoords.z)))
         if Config.PhoneNumber then caller = phone else caller = ('%s %s'):format(firstname, lastname) end
         if Config.Default911 then TriggerServerEvent('mdt:newCall', args, caller, vector3(playerCoords.x, playerCoords.y, playerCoords.z)) else
             TriggerServerEvent('wf-alerts:svNotify911', args, caller, playerStreetsLocation, vector3(playerCoords.x, playerCoords.y, playerCoords.z))

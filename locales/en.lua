@@ -28,4 +28,5 @@ Locales['en'] = {
     ['speeding'] = "Reckless driving",
     ['autotheft'] = "Theft of a motor vehicle",
     ['officerdown'] = "Officer is down",
+    ['persondown'] = "Person is injured",
 }
