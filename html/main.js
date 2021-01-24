@@ -8,7 +8,7 @@ $('document').ready(function() {
     function ShowNotif(data) {
             var $notification = CreateNotification(data);
             var $height = $notification.height;
-            $('.notif-container').prepend($notification.animate({width: '350px', height: ''+ $height +'', 'line-height':'1.5em', fontSize: '12px', margin:'0 0 4px 0', opacity:'1'}));
+            $('.notif-container').prepend($notification.animate({width: '360px', height: ''+ $height +'', 'line-height':'1.5em', fontSize: '12px', margin:'0 0 4px 0', opacity:'1'}));
             setTimeout(function() {
                 $.when($notification.animate({width: '0', height:'0', fontSize: '0', margin:'5px 5px 5px 350px', opacity:'0'})).done(function() {
                     $notification.remove()
@@ -44,29 +44,29 @@ $('document').ready(function() {
            if (data.info.info2 !== undefined) {
                 $notification.html('\
                 <div class="content">\
+                <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
                 <div id="code">' + data.info.displayCode + '</div>\
                 <div id="alert-name">' + data.info.dispatchMessage + '</div>\
-                <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
-                <div id="alert-info"><i class="fas ' + data.info.infoM + '"></i>' + data.info.info + '<br><i class="fas ' + data.info.infoM2 + '"></i>' + data.info.info2 + '<br><i class="fas fa-globe-europe"></i>' + data.info.street + '</div>\
+                <div id="alert-info"><i class="fas ' + data.info.infoM + '"></i>' + data.info.info + '<br><i class="fas ' + data.info.infoM2 + '"></i>' + data.info.info2 + '<br><span style="text-verflow: hidden; white-space: nowrap;"><i class="fas fa-globe-europe"></i>' + data.info.street + '</span></div>\
                 </div>');
                 $notification.height = '93px'
             } else {
                 $notification.html('\
                 <div class="content">\
+                <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
                 <div id="code">' + data.info.displayCode + '</div>\
                 <div id="alert-name">' + data.info.dispatchMessage + '</div>\
-                <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
-                <div id="alert-info"><i class="fas ' + data.info.infoM + '"></i>' + data.info.info + '<br><i class="fas fa-globe-europe"></i>' + data.info.street + '</div>\
+                <div id="alert-info"><i class="fas ' + data.info.infoM + '"></i>' + data.info.info + '<br><span style="text-verflow: hidden; white-space: nowrap;"><i class="fas fa-globe-europe"></i>' + data.info.street + '</span></div>\
                 </div>');
                 $notification.height = '73px'
             }
        } else {
             $notification.html('\
             <div class="content">\
+            <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
             <div id="code">' + data.info.displayCode + '</div>\
             <div id="alert-name">' + data.info.dispatchMessage + '</div>\
-            <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
-            <div id="alert-info"><i class="fas fa-globe-europe"></i>' + data.info.street + '</div>\
+            <div id="alert-info"><span style="text-verflow: hidden; white-space: nowrap;"><i class="fas fa-globe-europe"></i>' + data.info.street + '</span></div>\
             </div>');
             $notification.height = '53px'
        }
@@ -81,3 +81,4 @@ $('document').ready(function() {
 });
 
 //       <div id="alert-info"><i class="fas fa-globe-europe"></i>' + data.info["loc"] + '</div>\
+//       <div id="marker"><i class="fas fa-map-marker-alt" aria-hidden="true"></i></div>\
