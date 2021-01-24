@@ -84,9 +84,7 @@ function zoneChance(type, playerCoords, street, zoneMod)
         zoneMod = zoneMod * 1.6
         zoneMod = math.ceil(zoneMod+0.5)
     end
-    print(zoneMod)
     zoneMod = zoneMod / (nearbyPeds / 3)
-    print(zoneMod)
     zoneMod = (math.ceil(zoneMod+0.5))
     local sum = math.random(1, zoneMod)
     if Config.DebugChance then sum = 1 end
