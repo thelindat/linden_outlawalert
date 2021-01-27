@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-version '2.4.2'
+version '2.4.3'
 description 'https://github.com/thelindat/linden_outlawalert'
 
 client_scripts {

@@ -1,6 +1,5 @@
 Config = {}
 Config.Enable = {}
-Config.Loaded = false
 Config.Timer = {}
 
 Config.Locale = 'en'
@@ -17,7 +16,7 @@ Config.Default911 = false
 Config.Debug = true
 
 -- sets report chance to 100%
-Config.DebugChance = false
+Config.DebugChance = true
 
 
 Config.Enable.Speeding = true
@@ -25,29 +24,6 @@ Config.Enable.Shooting = true
 Config.Enable.Autotheft = true
 Config.Enable.Melee = true
 Config.Enable.PlayerDowned = true
-
-
-
-Citizen.CreateThread(function()
-    if not Config.Loaded then
-        for k, v in pairs(Config.Enable) do
-            if Config.Enable[k] ~= false then
-                Config[k] = {}
-                Config.Timer[k] = 0 -- Default to 0 seconds
-                Config[k].Success = 300 -- Default to 30 seconds
-                Config[k].Fail = 20 -- Default to 2 seconds
-            end
-        end
-        -- If you want to set specific timers, do it here
-        Config.Shooting.Success = 150
-        Config.Shooting.Fail = 0
-        
-        Config.Loaded = true
-    end
-end)
-
-
-
 
 Config.WeaponBlacklist = {
 	'WEAPON_GRENADE',

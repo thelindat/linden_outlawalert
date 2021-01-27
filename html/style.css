@@ -92,41 +92,6 @@
     height: 73px;
     color: white;
 }
-
-.alerts.ambulance {
-    box-shadow: 3px 0px 3px 0px rgba(223, 61, 61, 0.9) inset;
-    background: rgba(173, 38, 38, 0.9);
-}
-
-.alerts.police {
-    box-shadow: -3px 0px 0px 0px rgba(41, 97, 161, 0.9) inset;
-    background: rgba(26, 68, 116, 0.9);
-}
-
-.alerts.admin {
-    box-shadow: -3px 0px 0px 0px red inset;
-}
-
-.alerts.warning {
-    box-shadow: -3px 0px 0px 0px red inset;
-}
-
-.alerts.info {
-    box-shadow: -3px 0px 0px 0px red inset;
-}
-
-.alerts.error {
-    box-shadow: -3px 0px 0px 0px red inset;
-}
-
-.alerts.thefuckisthiscalledfor {
-    box-shadow: -3px 0px 0px 0px red inset;
-}
-
-
-
-
-
 .template, .notification {
     display: none;
 }
@@ -159,23 +124,9 @@
     float: right;
 }
 
-.move {
-    -webkit-transition: all .2s ease-in-out;
-    -moz-transition: all .2s ease-in-out;
-    -ms-transition: all .2s ease-in-out;
-    -o-transition: all .2s ease-in-out;
-    transition: all .2s ease-in-out;
-}
-
-.error {
-    box-shadow: -5px 0px 0px 0px red inset;
-    background: rgba(160, 17, 48, 0.75);
-    color: #fff;
-}
-
 .ambulance {
-    box-shadow: -3px 0px 0px 0px rgba(182, 47, 47, 0.9) inset;
-    background: rgba(116, 26, 26, 0.9);
+    box-shadow: -3px 0px 0px 0px rgba(192, 62, 62, 0.9) inset;
+    background: rgba(146, 36, 36, 0.9);
 }
 
 .police {
@@ -190,12 +141,12 @@
 }
 
 @keyframes myfirst {
-    0%   {background-color:rgba(173, 38, 38, 0.9); left:0px; top:0px;}
-    15%  {background-color:rgba(30, 79, 134, 0.9); left:200px; top:200px;}
-    30% {background-color:rgba(173, 38, 38, 0.9); left:0px; top:0px;}
-    45%  {background-color:rgba(30, 79, 134, 0.9); left:200px; top:200px;}
-    60% {background-color:rgba(173, 38, 38, 0.9); left:0px; top:0px;}
-    75%  {background-color:rgba(30, 79, 134, 0.9); left:200px; top:200px;}
-    90% {background-color:rgba(173, 38, 38, 0.9); left:0px; top:0px;}
-    100%  {background-color:rgba(30, 79, 134, 0.9); left:200px; top:200px;}
+    0%   {background:rgba(146, 36, 36, 0.9); left:0px; top:0px; box-shadow: -3px 0px 0px 0px rgba(192, 62, 62, 0.9) inset;}
+    15%  {background:rgba(26, 68, 116, 0.9); left:200px; top:200px; box-shadow: -3px 0px 0px 0px rgba(47, 110, 182, 0.9) inset;}
+    30% {background:rgba(146, 36, 36, 0.9); left:0px; top:0px; box-shadow: -3px 0px 0px 0px rgba(192, 62, 62, 0.9) inset;}
+    45%  {background:rgba(26, 68, 116, 0.9); left:200px; top:200px; box-shadow: -3px 0px 0px 0px rgba(47, 110, 182, 0.9) inset;}
+    60% {background:rgba(146, 36, 36, 0.9); left:0px; top:0px; box-shadow: -3px 0px 0px 0px rgba(192, 62, 62, 0.9) inset;}
+    75%  {background:rgba(26, 68, 116, 0.9); left:200px; top:200px; box-shadow: -3px 0px 0px 0px rgba(47, 110, 182, 0.9) inset;}
+    90% {background:rgba(146, 36, 36, 0.9); left:0px; top:0px; box-shadow: -3px 0px 0px 0px rgba(192, 62, 62, 0.9) inset;}
+    100%  {background:rgba(26, 68, 116, 0.9); left:200px; top:200px; box-shadow: -3px 0px 0px 0px rgba(47, 110, 182, 0.9) inset;}
   }
