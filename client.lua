@@ -247,7 +247,7 @@ Citizen.CreateThread(function()
     local sleep = 100
     while true do
         if isLoaded then
-            playerPed = PlayerPedId() end
+            playerPed = PlayerPedId()
             if (not isPlayerWhitelisted or Config.Debug) then
                 for k, v in pairs(Config.Timer) do
                     if v > 0 then Config.Timer[k] = v - 1 end
