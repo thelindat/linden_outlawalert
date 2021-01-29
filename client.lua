@@ -250,6 +250,7 @@ Citizen.CreateThread(function()
                 for k, v in pairs(Config.Timer) do
                     if v > 0 then Config.Timer[k] = v - 1 end
                 end
+
                 if GetVehiclePedIsUsing(playerPed) ~= 0 then
                     local vehicle = GetVehiclePedIsUsing(playerPed, true)
                         if vehicleWhitelist[GetVehicleClass(vehicle)] then
@@ -307,7 +308,7 @@ Citizen.CreateThread(function()
                         else
                             Config.Timer['Shooting'] = Config.Shooting.Fail
                         end
-                    elseif Config.Timer['Melee'] == 0 and IsPedInMeleeCombat(playerPed) then -- TODO: detect when punching a ped, currently just detects player in combat stance
+                    elseif Config.Timer['Melee'] == 0 and IsPedInMeleeCombat(playerPed) and HasPedBeenDamagedByWeapon(GetMeleeTargetForPed(playerPed), 0, 1) then
                         sleep = 10
                         if zoneChance('Melee', currentStreetName) then
                             data = {dispatchCode = 'melee', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 4000}
