@@ -15,11 +15,14 @@ Citizen.CreateThread(function()
     rank = ESX.PlayerData.job.grade_label
     isPlayerWhitelisted = refreshPlayerWhitelisted()
 
-    ESX.TriggerServerCallback('linden_outlawalert:getCharData', function(chardata)
-        firstname = chardata.firstname
-        lastname = chardata.lastname
-        phone = chardata.phone_number
-    end)
+    while firstname == nil do
+        ESX.TriggerServerCallback('linden_outlawalert:getCharData', function(chardata)
+            firstname = chardata.firstname
+            lastname = chardata.lastname
+            phone = chardata.phone_number
+        end)
+        Citizen.Wait(5000)
+    end
 end)
 
 RegisterNetEvent('esx:setJob')
