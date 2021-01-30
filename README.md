@@ -1,7 +1,6 @@
-# linden_outlawalert
-Intended for use with [ESX] Hypaste RP’s Mobile Data Terminal by distritic, but it is not required
-<img src="https://i.imgur.com/Ome5KDF.png"></img>  
-Note: If upgrading from v1 you will need to update the mdt:newCall event once again. Any custom alerts will also need updating.
+<p align="center"><img src="https://i.imgur.com/Ome5KDF.png"/><br>
+* Intended for use with [ESX] Hypaste RP’s Mobile Data Terminal by distritic, but it is not required *</p>
+<hr>
 
 
 # Instructions
