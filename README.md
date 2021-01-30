@@ -11,7 +11,9 @@ If you want 100% report chance then leave Config.DebugChance, though I recommend
 [Share any feedback on the thread](https://forum.cfx.re/t/esx-outlawalert-wildfire-alerts-and-hypaste-mdt-integration/)
 
 ### Optional
-Download and setup Hypaste RP's MDT (link in credits)  
+<a href='https://github.com/thelindat/mdt'>Download my Hypaste mdt fork</a> or modify the original release (read below).  
+
+<a href='https://github.com/distritic/mdt/'>Hypaste mdt original git</a>  
 Open mdt/sv_mdt.lua and locate RegisterServerEvent("mdt:newCall"), replace with:  
   ```
 RegisterServerEvent("mdt:newCall")
