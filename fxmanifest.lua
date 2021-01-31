@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-version '2.4.7'
+version '2.4.8'
 description 'https://github.com/thelindat/linden_outlawalert'
 
 client_scripts {
@@ -34,3 +34,4 @@ files {
 export "getSpeed"
 export "getStreet"
 export "zoneChance"
+export "getStreetandZone"
