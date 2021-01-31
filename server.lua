@@ -58,22 +58,22 @@ RegisterCommand('testvangelico', function(playerId, args, rawCommand)
     local dispatchData = {dispatchData = data, caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
     TriggerEvent('wf-alerts:svNotify', dispatchData)
 end, false)
---]]
+]]
 
 
 RegisterServerEvent('wf-alerts:svNotify')
 AddEventHandler('wf-alerts:svNotify', function(pData)
     local dispatchData
     if not pData.dispatchCode then dispatchData = pData.dispatchData elseif dispatchCodes[pData.dispatchCode] ~= nil then dispatchData = dispatchCodes[pData.dispatchCode] end
+    if not pData.info then pData.info = dispatchData.info end
+    if not pData.info2 then pData.info2 = dispatchData.info2 end
+    if not pData.length then pData.length = dispatchData.length end
     pData.displayCode = dispatchData.displayCode
     pData.dispatchMessage = dispatchData.description
     pData.isImportant = dispatchData.isImportant
     pData.recipientList = dispatchData.recipientList
-    if not pData.info then pData.info = dispatchData.info end
-    if not pData.info2 then pData.info2 = dispatchData.info2 end
     pData.infoM = dispatchData.infoM
     pData.infoM2 = dispatchData.infoM2
-    pData.length = dispatchData.length
     pData.sprite = dispatchData.blipSprite
     pData.colour = dispatchData.blipColour
     pData.scale = dispatchData.blipScale
