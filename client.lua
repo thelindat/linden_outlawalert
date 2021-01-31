@@ -53,6 +53,7 @@ end)
 
 function getSpeed() return speedlimit end
 function getStreet() return currentStreetName end
+function getStreetandZone(coords) return pedLocation(GetLabelText(GetNameOfZone(coords.x, coords.y, coords.z))) end
 
 function refreshPlayerWhitelisted()
 	if not ESX.PlayerData then return false end
