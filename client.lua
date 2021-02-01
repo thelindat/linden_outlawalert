@@ -35,8 +35,10 @@ Citizen.CreateThread(function()
             end
         end
         -- If you want to set specific timers, do it here
-        Config.Shooting.Success = 150
-        Config.Shooting.Fail = 0
+        if Config.Shooting then
+            Config.Shooting.Success = 150
+            Config.Shooting.Fail = 0
+        end
             
         notLoaded = nil
     end
@@ -269,7 +271,7 @@ Citizen.CreateThread(function()
                             end
                         elseif Config.Timer['Speeding'] == 0 and playerPed == driver and speedlimit then
                             sleep = 100
-                            if (GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(40,80))) then
+                            if (GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60))) then
                                 if zoneChance('Speeding', currentStreetName) then
                                     Citizen.Wait(400)
                                     if IsPedInAnyVehicle(playerPed, true) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
