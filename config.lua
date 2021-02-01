@@ -13,10 +13,10 @@ Config.PhoneNumber = true
 Config.Default911 = false
 
 -- enable alerts when cops break the law and print to console
-Config.Debug = true
+Config.Debug = false
 
 -- sets report chance to 100%
-Config.DebugChance = true
+Config.DebugChance = false
 
 
 Config.Enable.Speeding = true
