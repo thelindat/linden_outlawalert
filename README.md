@@ -34,6 +34,7 @@ end)
 ```  
 
 ## Custom alerts  
+Check the ![https://github.com/thelindat/linden_outlawalert/wiki](wiki) for existing examples.  
 For example, if we were to edit one of the jewelry heist scripts, you can replace the default method for alerting the police with the following
 ```
 local data = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000', infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'}
@@ -42,13 +43,14 @@ TriggerEvent('wf-alerts:svNotify', dispatchData)
 ```
 You can define infoM2 and info2 for an additional line of text. If you are triggering the event from a client make sure you use TriggerServerEvent.
 
-Lastly, you can use the below code to use the report chance export. Setting the last number higher will reduce the likelihood of a notification being sent.
+You can use the below code to use the report chance export. Setting the last number higher will reduce the likelihood of a notification being sent.
 ```
 local chance = exports['linden_outlawalert']:zoneChance('Custom', GetEntityCoords(PlayerPedId(), exports['linden_outlawalert']:getStreet(), 2)
 if chance then
 	do stuff
 end
 ```
+If you want to display a players street and zone then you can use `local street = exports['linden_outlawalert']:getStreet()` from the clientside.
 
 
 # Credits:
