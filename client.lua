@@ -117,7 +117,7 @@ function zoneChance(type, street, zoneMod)
     local sum = math.random(1, zoneMod)
     if Config.DebugChance then sum = 1 end
     local chance = string.format('%.2f',(1 / zoneMod) * 100)..'%'
-    
+
     if sum > 1 then
         if Config.Debug then print(('^1[%s] %s (%s) - %s nearby peds^7'):format(type, zone, chance, nearbyPeds)) end
         sendit = false
@@ -166,6 +166,7 @@ function pedLocation(zone)
     else
         playerStreetsLocation = zone
     end
+    return playerStreetsLocation
 end
 
 function createBlip(data)
