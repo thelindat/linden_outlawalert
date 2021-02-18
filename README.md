@@ -50,7 +50,7 @@ if chance then
 	do stuff
 end
 ```
-If you want to display a players street and zone then you can use `local street = exports['linden_outlawalert']:getStreet()` from the clientside.
+If you want to display a players street and zone then you can use `exports['linden_outlawalert']:getStreetandZone()` from the clientside.
 
 
 # Credits:
