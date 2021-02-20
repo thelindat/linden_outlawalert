@@ -55,7 +55,7 @@ local dispatchCodes = {
 --[[ Example custom alert
 RegisterCommand('testvangelico', function(playerId, args, rawCommand)
     local data = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000', infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'}
-    local dispatchData = {dispatchData = data, caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
+    local dispatchData = {dispatchData = data, caller = 'Alarm', coords = vector3(-633.9, -241.7, 38.1)}
     TriggerEvent('wf-alerts:svNotify', dispatchData)
 end, false)
 ]]
@@ -97,7 +97,7 @@ end)
 
 
 RegisterServerEvent('wf-alerts:svNotify911')
-AddEventHandler('wf-alerts:svNotify911', function(message, caller, street, coords)
+AddEventHandler('wf-alerts:svNotify911', function(message, caller, coords)
     if message ~= nil then
         local pData = {}
         pData.displayCode = '911'
@@ -105,7 +105,6 @@ AddEventHandler('wf-alerts:svNotify911', function(message, caller, street, coord
         pData.dispatchMessage = _U('call_from') .. caller end
         pData.recipientList = {'police', 'ambulance'}
         pData.length = 6000
-        pData.street = street
         pData.infoM = 'fa-phone'
         pData.info = message
         pData.coords = coords
