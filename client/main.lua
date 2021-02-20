@@ -1,6 +1,12 @@
 function getSpeed() return speedlimit end
 function getStreet() return currentStreetName end
-function getStreetandZone(coords) return pedLocation(GetLabelText(GetNameOfZone(coords.x, coords.y, coords.z))) end
+function getStreetandZone(coords)
+    local zone = GetLabelText(GetNameOfZone(coords.x, coords.y, coords.z))
+    local currentStreetHash = GetStreetNameAtCoord(coords.x, coords.y, coords.z)
+    currentStreetName = GetStreetNameFromHashKey(currentStreetHash)
+    playerStreetsLocation = currentStreetName .. ", " .. zone
+    return playerStreetsLocation
+end
 
 function refreshPlayerWhitelisted()
 	if not ESX.PlayerData then return false end
@@ -67,7 +73,6 @@ function zoneChance(type, zoneMod, street)
         sendit = false
     else
         if Config.Debug then print(('^2[%s] %s (%s) - %s nearby peds^7'):format(type, zone, chance, nearbyPeds)) end
-        pedLocation(zone)
         sendit = true
     end
     return sendit
@@ -100,16 +105,6 @@ function vehicleData(vehicle)
     if doorCount == 2 then doorCount = _U('two_door') elseif doorCount == 3 then doorCount = _U('three_door') elseif doorCount == 4 then doorCount = _U('four_door') else doorCount = '' end
     vData.class, vData.name, vData.colour, vData.doors, vData.plate, vData.id = vehClass, vehicleName, vehicleColour, doorCount, plate, NetworkGetNetworkIdFromEntity(vehicle)
     return vData
-end
-
-function pedLocation(zone)
-    playerStreetsLocation = zone
-    if currentStreetName ~= nil and currentStreetName ~= "" then
-        playerStreetsLocation = currentStreetName .. ", " .. zone
-    else
-        playerStreetsLocation = zone
-    end
-    return playerStreetsLocation
 end
 
 function createBlip(data)
