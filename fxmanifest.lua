@@ -8,7 +8,8 @@ client_scripts {
     '@es_extended/locale.lua',
     'locales/en.lua',
     'locales/fr.lua',
-    'client.lua',
+    'client/esx.lua',
+    'client/main.lua',
 }
 
 shared_script 'config.lua'
@@ -31,7 +32,6 @@ files {
 	'html/style.css',
 }
 
-export "getSpeed"
-export "getStreet"
-export "zoneChance"
-export "getStreetandZone"
+export "getSpeed"           -- exports['linden_outlawalert']:getSpeed
+export "getStreet"          -- exports['linden_outlawalert']:getStreet
+export "zoneChance"         -- exports['linden_outlawalert']:zoneChance('Custom', 2)
