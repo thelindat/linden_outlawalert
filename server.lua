@@ -126,11 +126,11 @@ end)
 CreateThread(function()
     local resourceName = GetCurrentResourceName()
     local currentVersion, latestVersion = GetResourceMetadata(resourceName, 'version')
-    local outdated = '^7[%s]^3 Version ^2%s^3 is available! You are using version ^1%s^7'
+    local outdated = '^6[%s]^3 Version ^2%s^3 is available! You are using version ^1%s^7'
     Citizen.Wait(2000)
     while Config.CheckVersion do
         Citizen.Wait(0)
-        PerformHttpRequest("https://raw.githubusercontent.com/thelindat/linden_outlawalert/master/fxmanifest.lua", function (errorCode, resultData, resultHeaders)
+        PerformHttpRequest(GetResourceMetadata(resourceName, 'versioncheck'), function (errorCode, resultData, resultHeaders)
             if errorCode ~= 200 then print("Returned error code:" .. tostring(errorCode)) else
                 local data, version = tostring(resultData)
                 for line in data:gmatch("([^\n]*)\n?") do
