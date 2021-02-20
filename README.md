@@ -45,8 +45,7 @@ You can define infoM2 and info2 for an additional line of text. If you are trigg
 
 You can use the below code to use the report chance export. Setting the last number higher will reduce the likelihood of a notification being sent.
 ```
-local chance = exports['linden_outlawalert']:zoneChance('Custom', exports['linden_outlawalert']:getStreet(), 2)
-if chance then
+if exports['linden_outlawalert']:zoneChance('Custom', 2) then
 	do stuff
 end
 ```
