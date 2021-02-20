@@ -97,7 +97,7 @@ end
 
 function zoneChance(type, street, zoneMod)
     playerCoords = GetEntityCoords(PlayerPedId())
-    local zone, zoneid, sendit = GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)), GetZoneAtCoords(playerCoords.x, playerCoords.y, playerCoords.z), false
+    local zone, sendit = GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)), false
     local typeMods = {['Shooting'] = 2, ['Speeding'] = 5, ['Melee'] = 3, ['Autotheft'] = 2 }
     if not nearbyPeds then
         nearbyPeds = GetAllPeds()
@@ -125,7 +125,6 @@ function zoneChance(type, street, zoneMod)
         if Config.Debug then print(('^2[%s] %s (%s) - %s nearby peds^7'):format(type, zone, chance, nearbyPeds)) end
         pedLocation(zone)
         sendit = true
-    pedLocation(zone)
     end
     return sendit
 end
@@ -222,6 +221,7 @@ RegisterNetEvent('wf-alerts:clNotify')
 AddEventHandler('wf-alerts:clNotify', function(pData)
     if pData ~= nil then
         if not pData.length then pData.length = 4000 end
+        pData.street = getStreetandZone(pData.coords)
         SendNUIMessage({action = 'display', info = pData, job = ESX.PlayerData.job.name, length = pData.length})
         PlaySound(-1, "Event_Message_Purple", "GTAO_FM_Events_Soundset", 0, 0, 1)
         createBlip(pData)
@@ -263,7 +263,7 @@ Citizen.CreateThread(function()
                             sleep = 10
                             if IsPedShooting(playerPed) and zoneChance('Shooting', currentStreetName) then
                                 local veh = vehicleData(vehicle)
-                                data = {dispatchCode = 'driveby', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = veh.id, length = 6000,
+                                data = {dispatchCode = 'driveby', caller = _U('caller_local'), coords = playerCoords, netId = veh.id, length = 6000,
                                 info = ('[%s] %s%s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
                                 TriggerServerEvent('wf-alerts:svNotify', data)
                                 Config.Timer['Shooting'] = Config.Shooting.Success
@@ -277,7 +277,7 @@ Citizen.CreateThread(function()
                                     Citizen.Wait(400)
                                     if IsPedInAnyVehicle(playerPed, true) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
                                         local veh = vehicleData(vehicle)
-                                        data = {dispatchCode = 'speeding', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
+                                        data = {dispatchCode = 'speeding', caller = _U('caller_local'), coords = playerCoords, netId = veh.id,
                                         info = ('[%s] %s%s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
                                         TriggerServerEvent('wf-alerts:svNotify', data)
                                         Config.Timer['Speeding'] = Config.Speeding.Success
@@ -292,7 +292,7 @@ Citizen.CreateThread(function()
                             ESX.TriggerServerCallback('linden_outlawalert:isVehicleOwned', function(hasowner) veh.owned = hasowner end, veh.plate)
                             if not veh.owned then
                                 if zoneChance('Autotheft', currentStreetName) then
-                                    data = {dispatchCode = 'autotheft', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = veh.id,
+                                    data = {dispatchCode = 'autotheft', caller = _U('caller_local'), coords = playerCoords, netId = veh.id,
                                     info = ('[%s] %s %s'):format(veh.plate, veh.name..',', veh.class), info2 = veh.colour}
                                     TriggerServerEvent('wf-alerts:svNotify', data)
                                     Config.Timer['Autotheft'] = Config.Autotheft.Success
@@ -306,7 +306,7 @@ Citizen.CreateThread(function()
                     if Config.Timer['Shooting'] == 0 and not BlacklistedWeapon(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
                         sleep = 10
                         if IsPedShooting(playerPed) and zoneChance('Shooting', currentStreetName) then
-                            data = {dispatchCode = 'shooting', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
+                            data = {dispatchCode = 'shooting', caller = _U('caller_local'), coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
                             TriggerServerEvent('wf-alerts:svNotify', data)
                             Config.Timer['Shooting'] = Config.Shooting.Success
                         else
@@ -315,7 +315,7 @@ Citizen.CreateThread(function()
                     elseif Config.Timer['Melee'] == 0 and IsPedInMeleeCombat(playerPed) and HasPedBeenDamagedByWeapon(GetMeleeTargetForPed(playerPed), 0, 1) then
                         sleep = 10
                         if zoneChance('Melee', currentStreetName) then
-                            data = {dispatchCode = 'melee', caller = _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 4000}
+                            data = {dispatchCode = 'melee', caller = _U('caller_local'), coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 4000}
                             TriggerServerEvent('wf-alerts:svNotify', data)
                             Config.Timer['Melee'] = Config.Melee.Success
                         else
@@ -333,15 +333,14 @@ AddEventHandler('esx:onPlayerDeath', function(reason)
     local netId = NetworkGetNetworkIdFromEntity(playerPed)
     local name = ('%s %s'):format(firstname, lastname)
     local title = ('%s %s'):format(rank, lastname)
-    pedLocation(GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)))
     refreshPlayerWhitelisted()
     if isPlayerWhitelisted then
         Citizen.Wait(2000)
-        data = {dispatchCode = 'officerdown', caller = name, street = playerStreetsLocation, coords = playerCoords, netId = netId, info = title, length = 10000}
+        data = {dispatchCode = 'officerdown', caller = name, coords = playerCoords, netId = netId, info = title, length = 10000}
         TriggerServerEvent('wf-alerts:svNotify', data)
     elseif Config.Enable.PlayerDowned then
         Citizen.Wait(2000)
-        data = {dispatchCode = 'persondown', _U('caller_local'), street = playerStreetsLocation, coords = playerCoords, netId = netId, length = 8000}
+        data = {dispatchCode = 'persondown', _U('caller_local'), coords = playerCoords, netId = netId, length = 8000}
         TriggerServerEvent('wf-alerts:svNotify', data)
     end
 end)
@@ -350,17 +349,15 @@ end)
 RegisterCommand('911', function(playerId, args, rawCommand)
     args = table.concat(args, ' ')
     local caller
-    pedLocation(GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)))
     if Config.PhoneNumber then caller = phone else caller = ('%s %s'):format(firstname, lastname) end
-    if Config.Default911 then TriggerServerEvent('mdt:newCall', args, caller, vector3(playerCoords.x, playerCoords.y, playerCoords.z)) else
-        TriggerServerEvent('wf-alerts:svNotify911', args, caller, playerStreetsLocation, vector3(playerCoords.x, playerCoords.y, playerCoords.z))
+    if Config.Default911 then TriggerServerEvent('mdt:newCall', args, caller, playerCoords) else
+        TriggerServerEvent('wf-alerts:svNotify911', args, caller, playerCoords)
     end
 end, false)
 
 RegisterCommand('911a', function(playerId, args, rawCommand)
     args = table.concat(args, ' ')
-    pedLocation(GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)))
-    if Config.Default911 then TriggerServerEvent('mdt:newCall', args, _U('caller_unknown'), vector3(playerCoords.x, playerCoords.y, playerCoords.z)) else
-        TriggerServerEvent('wf-alerts:svNotify911', args, _U('caller_unknown'), playerStreetsLocation, vector3(playerCoords.x, playerCoords.y, playerCoords.z))
+    if Config.Default911 then TriggerServerEvent('mdt:newCall', args, _U('caller_unknown'), playerCoords) else
+        TriggerServerEvent('wf-alerts:svNotify911', args, _U('caller_unknown'), playerCoords)
     end
 end, false)
