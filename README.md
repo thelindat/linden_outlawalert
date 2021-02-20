@@ -38,7 +38,7 @@ Check the ![https://github.com/thelindat/linden_outlawalert/wiki](wiki) for exis
 For example, if we were to edit one of the jewelry heist scripts, you can replace the default method for alerting the police with the following
 ```
 local data = {displayCode = '211', description = 'Robbery', isImportant = 0, recipientList = {'police'}, length = '10000', infoM = 'fa-info-circle', info = 'Vangelico Jewelry Store'}
-local dispatchData = {dispatchData = data, caller = 'Alarm', street = 'Portola Dr, Rockford Hills', coords = vector3(-633.9, -241.7, 38.1)}
+local dispatchData = {dispatchData = data, caller = 'Alarm', coords = vector3(-633.9, -241.7, 38.1)}
 TriggerEvent('wf-alerts:svNotify', dispatchData)
 ```
 You can define infoM2 and info2 for an additional line of text. If you are triggering the event from a client make sure you use TriggerServerEvent.
@@ -50,7 +50,6 @@ if chance then
 	do stuff
 end
 ```
-If you want to display a players street and zone then you can use `exports['linden_outlawalert']:getStreetandZone()` from the clientside.
 
 
 # Credits:
