@@ -58,7 +58,7 @@ RegisterCommand('testvangelico', function(playerId, args, rawCommand)
     local dispatchData = {dispatchData = data, caller = 'Alarm', coords = vector3(-633.9, -241.7, 38.1)}
     TriggerEvent('wf-alerts:svNotify', dispatchData)
 end, false)
-]]
+--]]
 
 
 RegisterServerEvent('wf-alerts:svNotify')
