@@ -1,4 +1,5 @@
 ESX = nil
+notLoaded, currentStreetName, intersectStreetName, lastStreet, speedlimit, nearbyPeds, isPlayerWhitelisted, playerPed, playerCoords, job, rank, firstname, lastname, phone = true
 
 Citizen.CreateThread(function()
 	while ESX == nil do
@@ -12,6 +13,14 @@ Citizen.CreateThread(function()
     job = ESX.PlayerData.job.name
     rank = ESX.PlayerData.job.grade_label
     isPlayerWhitelisted = refreshPlayerWhitelisted()
+
+    ESX.TriggerServerCallback('linden_outlawalert:getCharData', function(chardata)
+        firstname = chardata.firstname
+        lastname = chardata.lastname
+        phone = chardata.phone_number
+        if firstname == nil then Citizen.Wait(1000) end
+    end)
+
 end)
 
 RegisterNetEvent('esx:setJob')
