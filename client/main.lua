@@ -1,58 +1,3 @@
-local currentStreetName, intersectStreetName, lastStreet, speedlimit, nearbyPeds = nil, nil, nil, nil, nil
-local isPlayerWhitelisted, playerPed, playerCoords, job, rank, firstname, lastname, phone = false
-local notLoaded = true
--- ESX Framework Stuff ---------------------------------------------------------------
-ESX = nil
-Citizen.CreateThread(function()
-	while ESX == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-        Citizen.Wait(10)
-	end
-	while ESX.GetPlayerData().job == nil do
-		Citizen.Wait(10)
-	end
-    ESX.PlayerData = ESX.GetPlayerData()
-    job = ESX.PlayerData.job.name
-    rank = ESX.PlayerData.job.grade_label
-    isPlayerWhitelisted = refreshPlayerWhitelisted()
-
-    while firstname == nil do
-        Citizen.Wait(0)
-        ESX.TriggerServerCallback('linden_outlawalert:getCharData', function(chardata)
-            firstname = chardata.firstname
-            lastname = chardata.lastname
-            phone = chardata.phone_number
-            if firstname == nil then Citizen.Wait(5000) end
-        end)
-    end
-    if notLoaded then
-        for k, v in pairs(Config.Enable) do
-            if Config.Enable[k] ~= false then
-                Config[k] = {}
-                Config.Timer[k] = 0 -- Default to 0 seconds
-                Config[k].Success = 300 -- Default to 30 seconds
-                Config[k].Fail = 20 -- Default to 2 seconds
-            end
-        end
-        -- If you want to set specific timers, do it here
-        if Config.Shooting then
-            Config.Shooting.Success = 150
-            Config.Shooting.Fail = 0
-        end
-            
-        notLoaded = nil
-    end
-end)
-
-RegisterNetEvent('esx:setJob')
-AddEventHandler('esx:setJob', function(job)
-    ESX.PlayerData = ESX.GetPlayerData()
-    job = ESX.PlayerData.job.name
-    rank = ESX.PlayerData.job.grade_label
-    isPlayerWhitelisted = refreshPlayerWhitelisted()
-end)
--- ESX Framework Stuff ---------------------------------------------------------------
-
 function getSpeed() return speedlimit end
 function getStreet() return currentStreetName end
 function getStreetandZone(coords) return pedLocation(GetLabelText(GetNameOfZone(coords.x, coords.y, coords.z))) end
@@ -95,16 +40,15 @@ function GetAllPeds()
     return count
 end
 
-function zoneChance(type, street, zoneMod)
+function zoneChance(type, zoneMod, street)
+    if not street then street = currentStreetName end
     playerCoords = GetEntityCoords(PlayerPedId())
     local zone, sendit = GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)), false
-    local typeMods = {['Shooting'] = 2, ['Speeding'] = 5, ['Melee'] = 3, ['Autotheft'] = 2 }
     if not nearbyPeds then
         nearbyPeds = GetAllPeds()
     elseif nearbyPeds < 1 then if Config.Debug then print(('^1[%s] Nobody is nearby to send a report^7'):format(type)) end
         return false
     end
-    zoneMod = typeMods[type]
     if zoneMod == nil then zoneMod = 1 end
     zoneMod = (math.ceil(zoneMod+0.5))
     local hour = GetClockHours()
@@ -261,7 +205,7 @@ Citizen.CreateThread(function()
                         local driver = GetPedInVehicleSeat(vehicle, -1)
                         if Config.Timer['Shooting'] == 0 and not BlacklistedWeapon(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
                             sleep = 10
-                            if IsPedShooting(playerPed) and zoneChance('Shooting', currentStreetName) then
+                            if IsPedShooting(playerPed) and zoneChance('Driveby', 2, currentStreetName) then
                                 local veh = vehicleData(vehicle)
                                 data = {dispatchCode = 'driveby', caller = _U('caller_local'), coords = playerCoords, netId = veh.id, length = 6000,
                                 info = ('[%s] %s%s'):format(veh.plate, veh.doors, veh.class), info2 = veh.colour}
@@ -273,7 +217,7 @@ Citizen.CreateThread(function()
                         elseif Config.Timer['Speeding'] == 0 and playerPed == driver and speedlimit then
                             sleep = 100
                             if (GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60))) then
-                                if zoneChance('Speeding', currentStreetName) then
+                                if zoneChance('Speeding', 4, currentStreetName) then
                                     Citizen.Wait(400)
                                     if IsPedInAnyVehicle(playerPed, true) and ((GetEntitySpeed(vehicle) * 3.6) >= (speedlimit + (math.random(30,60)))) then
                                         local veh = vehicleData(vehicle)
@@ -291,7 +235,7 @@ Citizen.CreateThread(function()
                             local veh = vehicleData(vehicle)
                             ESX.TriggerServerCallback('linden_outlawalert:isVehicleOwned', function(hasowner) veh.owned = hasowner end, veh.plate)
                             if not veh.owned then
-                                if zoneChance('Autotheft', currentStreetName) then
+                                if zoneChance('Autotheft', 2, currentStreetName) then
                                     data = {dispatchCode = 'autotheft', caller = _U('caller_local'), coords = playerCoords, netId = veh.id,
                                     info = ('[%s] %s %s'):format(veh.plate, veh.name..',', veh.class), info2 = veh.colour}
                                     TriggerServerEvent('wf-alerts:svNotify', data)
@@ -305,7 +249,7 @@ Citizen.CreateThread(function()
                 else
                     if Config.Timer['Shooting'] == 0 and not BlacklistedWeapon(playerPed) and not IsPedCurrentWeaponSilenced(playerPed) and IsPedArmed(playerPed, 4) then
                         sleep = 10
-                        if IsPedShooting(playerPed) and zoneChance('Shooting', currentStreetName) then
+                        if IsPedShooting(playerPed) and zoneChance('Shooting', 2, currentStreetName) then
                             data = {dispatchCode = 'shooting', caller = _U('caller_local'), coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 6000}
                             TriggerServerEvent('wf-alerts:svNotify', data)
                             Config.Timer['Shooting'] = Config.Shooting.Success
@@ -314,7 +258,7 @@ Citizen.CreateThread(function()
                         end
                     elseif Config.Timer['Melee'] == 0 and IsPedInMeleeCombat(playerPed) and HasPedBeenDamagedByWeapon(GetMeleeTargetForPed(playerPed), 0, 1) then
                         sleep = 10
-                        if zoneChance('Melee', currentStreetName) then
+                        if zoneChance('Melee', 3, currentStreetName) then
                             data = {dispatchCode = 'melee', caller = _U('caller_local'), coords = playerCoords, netId = NetworkGetNetworkIdFromEntity(playerPed), length = 4000}
                             TriggerServerEvent('wf-alerts:svNotify', data)
                             Config.Timer['Melee'] = Config.Melee.Success
