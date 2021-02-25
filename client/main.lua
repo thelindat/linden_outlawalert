@@ -115,7 +115,7 @@ function createBlip(data)
         if data.colour then colour = data.colour end
         if data.scale then scale = data.scale end
         local entId = NetworkGetEntityFromNetworkId(data.netId)
-        if data.netId and entId then
+        if data.netId and entId > 0 then
             blip = AddBlipForEntity(entId)
             SetBlipSprite(blip, sprite)
             SetBlipHighDetail(blip, true)
@@ -132,6 +132,7 @@ function createBlip(data)
             Citizen.Wait(0)
             blip = AddBlipForCoord(GetEntityCoords(entId))
         else
+            data.netId = nil
             blip = AddBlipForCoord(data.coords.x, data.coords.y, data.coords.z)
         end
         SetBlipSprite(blip, sprite)
@@ -145,7 +146,7 @@ function createBlip(data)
         AddTextComponentString(data.displayCode..' - '..data.dispatchMessage)
         EndTextCommandSetBlipName(blip)
         while alpha ~= 0 do
-            if data.netid then Citizen.Wait((data.length / 1000) * 5) else Citizen.Wait((data.length / 1000) * 20) end
+            if data.netId then Citizen.Wait((data.length / 1000) * 5) else Citizen.Wait((data.length / 1000) * 20) end
             alpha = alpha - 1
             SetBlipAlpha(blip, alpha)
             if alpha == 0 then
