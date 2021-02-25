@@ -114,8 +114,8 @@ function createBlip(data)
         if data.sprite then sprite = data.sprite end
         if data.colour then colour = data.colour end
         if data.scale then scale = data.scale end
-        if data.netId then
-            local entId = NetworkGetEntityFromNetworkId(data.netId)
+        local entId = NetworkGetEntityFromNetworkId(data.netId)
+        if data.netId and entId then
             blip = AddBlipForEntity(entId)
             SetBlipSprite(blip, sprite)
             SetBlipHighDetail(blip, true)
