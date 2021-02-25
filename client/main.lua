@@ -47,6 +47,7 @@ function GetAllPeds()
 end
 
 function zoneChance(type, zoneMod, street)
+    if not Config.DebugChance then return true end
     if not street then street = currentStreetName end
     playerCoords = GetEntityCoords(PlayerPedId())
     local zone, sendit = GetLabelText(GetNameOfZone(playerCoords.x, playerCoords.y, playerCoords.z)), false
@@ -65,7 +66,6 @@ function zoneChance(type, zoneMod, street)
     zoneMod = zoneMod / (nearbyPeds / 3)
     zoneMod = (math.ceil(zoneMod+0.5))
     local sum = math.random(1, zoneMod)
-    if Config.DebugChance then sum = 1 end
     local chance = string.format('%.2f',(1 / zoneMod) * 100)..'%'
 
     if sum > 1 then
