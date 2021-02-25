@@ -160,7 +160,7 @@ RegisterNetEvent('wf-alerts:clNotify')
 AddEventHandler('wf-alerts:clNotify', function(pData)
     if pData ~= nil then
         if not pData.length then pData.length = 4000 end
-        pData.street = getStreetandZone(pData.coords.x, pData.coords.y, pData.coords.z)
+        pData.street = getStreetandZone(vector3(pData.coords.x, pData.coords.y, pData.coords.z))
         SendNUIMessage({action = 'display', info = pData, job = ESX.PlayerData.job.name, length = pData.length})
         PlaySound(-1, "Event_Message_Purple", "GTAO_FM_Events_Soundset", 0, 0, 1)
         createBlip(pData)
