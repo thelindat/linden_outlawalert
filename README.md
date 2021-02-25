@@ -57,7 +57,7 @@ end
 
 
 ### gcphone 911 support
-Locate `function notifyAlertSMS` in `esxaddonsgcphone-s.lua`. Below `local messText add
+Locate `function notifyAlertSMS` in `esxaddonsgcphone-s.lua`. Below `local messText = alert.message` add
 ```
     if number == 'police' or number == 'ambulance' then
       TriggerEvent('wf-alerts:svNotify911', messText, alert.numero, GetEntityCoords(GetPlayerPed(alert.source)))
