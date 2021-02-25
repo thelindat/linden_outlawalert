@@ -107,7 +107,7 @@ AddEventHandler('wf-alerts:svNotify911', function(message, caller, coords)
         pData.length = 6000
         pData.infoM = 'fa-phone'
         pData.info = message
-        pData.coords = coords
+        pData.coords = vector3(coords.x, coords.y, coords.z)
         pData.sprite, pData.colour, pData.scale =  480, 84, 2.0 -- radar_vip, blue
         local xPlayers = ESX.GetPlayers()
 		for i= 1, #xPlayers do
