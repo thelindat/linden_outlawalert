@@ -56,6 +56,15 @@ end
 ```
 
 
+### gcphone 911 support
+Locate `function notifyAlertSMS` in `esxaddonsgcphone-s.lua`. Below `local messText add
+```
+    if number == 'police' or number == 'ambulance' then
+      TriggerEvent('wf-alerts:svNotify911', messText, alert.numero, GetEntityCoords(GetPlayerPed(alert.source)))
+    end
+```
+
+
 # Credits:
 
   Jager_bom for esx_outlawalert  
