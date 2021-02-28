@@ -77,7 +77,6 @@ AddEventHandler('wf-alerts:svNotify', function(pData)
     pData.sprite = dispatchData.blipSprite
     pData.colour = dispatchData.blipColour
     pData.scale = dispatchData.blipScale
-    Citizen.Wait(1500)
     local xPlayers = ESX.GetPlayers()
 	for i= 1, #xPlayers do
         local source = xPlayers[i]
@@ -120,7 +119,6 @@ AddEventHandler('wf-alerts:svNotify911', function(message, caller, coords)
         TriggerEvent('mdt:newCall', message, caller, vector3(coords.x, coords.y, coords.z), false)
     end
 end)
-
 
 -- VERSION CHECK
 CreateThread(function()
