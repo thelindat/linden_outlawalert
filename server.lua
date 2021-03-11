@@ -77,14 +77,15 @@ AddEventHandler('wf-alerts:svNotify', function(pData)
     pData.sprite = dispatchData.blipSprite
     pData.colour = dispatchData.blipColour
     pData.scale = dispatchData.blipScale
-    local xPlayers = ESX.GetPlayers()
+--[[local xPlayers = ESX.GetPlayers()
 	for i= 1, #xPlayers do
         local source = xPlayers[i]
         local xPlayer = ESX.GetPlayerFromId(source)
         if xPlayer.job.name == pData.recipientList[1] or xPlayer.job.name == pData.recipientList[2] then
             TriggerClientEvent('wf-alerts:clNotify', source, pData)
         end
-    end
+    end]]
+	TriggerClientEvent('wf-alerts:clNotify', -1, pData) -- Send to all clients then check auth clientside?
     local n = [[
 
 ]]
@@ -108,14 +109,15 @@ AddEventHandler('wf-alerts:svNotify911', function(message, caller, coords)
         pData.info = message
         pData.coords = vector3(coords.x, coords.y, coords.z)
         pData.sprite, pData.colour, pData.scale =  480, 84, 2.0 -- radar_vip, blue
-        local xPlayers = ESX.GetPlayers()
+--[[	local xPlayers = ESX.GetPlayers()
 		for i= 1, #xPlayers do
             local source = xPlayers[i]
             local xPlayer = ESX.GetPlayerFromId(source)
             if xPlayer.job.name == 'police' or xPlayer.job.name == 'ambulance' then
                 TriggerClientEvent('wf-alerts:clNotify', source, pData)
             end
-        end
+        end]]
+		TriggerClientEvent('wf-alerts:clNotify', -1, pData) -- Send to all clients then check auth clientside?
         TriggerEvent('mdt:newCall', message, caller, vector3(coords.x, coords.y, coords.z), false)
     end
 end)
