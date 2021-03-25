@@ -160,12 +160,18 @@ end
 RegisterNetEvent('wf-alerts:clNotify')
 AddEventHandler('wf-alerts:clNotify', function(pData)
     if pData ~= nil then
-        Citizen.Wait(1500)
-        if not pData.length then pData.length = 4000 end
-        pData.street = getStreetandZone(vector3(pData.coords.x, pData.coords.y, pData.coords.z))
-        SendNUIMessage({action = 'display', info = pData, job = ESX.PlayerData.job.name, length = pData.length})
-        PlaySound(-1, "Event_Message_Purple", "GTAO_FM_Events_Soundset", 0, 0, 1)
-        createBlip(pData)
+		local sendit = false
+		for i=1, #pData.recipientList do
+			if pData.recipientList[i] == ESX.PlayerData.job.name then sendit = true break end
+		end
+		if sendit then
+			Citizen.Wait(1500)
+			if not pData.length then pData.length = 4000 end
+			pData.street = getStreetandZone(vector3(pData.coords.x, pData.coords.y, pData.coords.z))
+			SendNUIMessage({action = 'display', info = pData, job = ESX.PlayerData.job.name, length = pData.length})
+			PlaySound(-1, "Event_Message_Purple", "GTAO_FM_Events_Soundset", 0, 0, 1)
+			createBlip(pData)
+		end
     end
 end)
 
