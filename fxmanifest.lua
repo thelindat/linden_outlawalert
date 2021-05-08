@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-version '2.6.4'
+version '2.7.0'
 description 'https://github.com/thelindat/linden_outlawalert'
 versioncheck 'https://raw.githubusercontent.com/thelindat/linden_outlawalert/master/fxmanifest.lua'
 
