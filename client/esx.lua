@@ -1,5 +1,6 @@
 ESX = nil
 notLoaded, currentStreetName, intersectStreetName, lastStreet, speedlimit, nearbyPeds, isPlayerWhitelisted, playerPed, playerCoords, job, rank, firstname, lastname, phone = true
+playerIsDead = false
 
 Citizen.CreateThread(function()
 	while ESX == nil do
@@ -38,3 +39,15 @@ function GetPlayerInfo()
     rank = ESX.PlayerData.job.grade_label
     isPlayerWhitelisted = refreshPlayerWhitelisted()
 end
+
+AddEventHandler('esx:onPlayerDeath', function(data)
+	playerIsDead = true
+end)
+
+AddEventHandler('esx:onPlayerSpawn', function(data)
+	playerIsDead = false
+end)
+
+AddEventHandler('playerSpawned', function(data)
+	playerIsDead = false
+end)
