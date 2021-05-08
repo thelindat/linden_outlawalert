@@ -286,8 +286,10 @@ Citizen.CreateThread(function()
 	end
 end)
 
+local canSendSignal = true
 RegisterCommand('alert_dead', function()
-	if playerIsDead then
+	if playerIsDead and canSendDistress then
+		canSendDistress = false
 		local netId = NetworkGetNetworkIdFromEntity(playerPed)
 		local name = ('%s %s'):format(firstname, lastname)
 		local title = ('%s %s'):format(rank, lastname)
@@ -296,16 +298,19 @@ RegisterCommand('alert_dead', function()
 			Citizen.Wait(2000)
 			data = {dispatchCode = 'officerdown', caller = name, coords = playerCoords, netId = netId, info = title, length = 10000}
 			TriggerServerEvent('wf-alerts:svNotify', data)
+			Citizen.Wait(20000)
+			canSendDistress = true
 		elseif Config.Enable.PlayerDowned then
 			Citizen.Wait(2000)
 			data = {dispatchCode = 'persondown', _U('caller_local'), coords = playerCoords, netId = netId, length = 8000}
 			TriggerServerEvent('wf-alerts:svNotify', data)
+			Citizen.Wait(20000)
+			canSendDistress = true
 		end
 	end
 end, false)
 
 RegisterKeyMapping('alert_dead', 'Send distress signal to Police/EMS', 'keyboard', 'G')
-
 
 RegisterCommand('911', function(playerId, args, rawCommand)
 	if not args[1] then exports['mythic_notify']:SendAlert('error', 'You must include a message with your 911 call') return end
