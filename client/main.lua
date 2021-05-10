@@ -286,7 +286,7 @@ Citizen.CreateThread(function()
 	end
 end)
 
-local canSendSignal = true
+local canSendDistress  = true
 RegisterCommand('alert_dead', function()
 	if playerIsDead and canSendDistress then
 		canSendDistress = false
