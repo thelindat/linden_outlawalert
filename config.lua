@@ -4,7 +4,7 @@ Config.Timer = {}
 
 ---------------------------------------------------------------
 Config.Locale = 'en'
-Config.CheckVersion = true
+Config.CheckVersion = false
 Config.CheckVersionDelay = 60 -- Minutes
 
 -- use phone_number instead of player name for 911 calls
@@ -17,7 +17,7 @@ Config.Default911 = false
 Config.Debug = false
 
 -- sets report chance to 100%
-Config.DebugChance = false
+Config.DebugChance = true
 
 -- enable default alerts
 Config.Enable.Speeding = true
@@ -25,6 +25,7 @@ Config.Enable.Shooting = true
 Config.Enable.Autotheft = true
 Config.Enable.Melee = true
 Config.Enable.PlayerDowned = true
+
 ---------------------------------------------------------------
 
 Citizen.CreateThread(function()
@@ -232,5 +233,4 @@ Citizen.CreateThread(function()
         ['159'] = "Brushed Gold",
         ['160'] = "MP100"
     }
-
 end)
