@@ -8,10 +8,10 @@ Config.CheckVersion = false
 Config.CheckVersionDelay = 60 -- Minutes
 
 -- use phone_number instead of player name for 911 calls
-Config.PhoneNumber = true
+Config.PhoneNumber = false
 
 -- use mdt notifications for 911 calls instead of WF_Alerts
-Config.Default911 = false
+Config.Default911 = true
 
 -- enable alerts when cops break the law and print to console
 Config.Debug = false
@@ -25,7 +25,6 @@ Config.Enable.Shooting = true
 Config.Enable.Autotheft = true
 Config.Enable.Melee = true
 Config.Enable.PlayerDowned = true
-
 ---------------------------------------------------------------
 
 Citizen.CreateThread(function()
@@ -233,4 +232,5 @@ Citizen.CreateThread(function()
         ['159'] = "Brushed Gold",
         ['160'] = "MP100"
     }
+
 end)

@@ -1,20 +1,18 @@
 fx_version 'cerulean'
 game 'gta5'
 
-version '2.6.4'
+version '2.7.1'
 description 'https://github.com/thelindat/linden_outlawalert'
+versioncheck 'https://raw.githubusercontent.com/thelindat/linden_outlawalert/master/fxmanifest.lua'
 
-client_scripts {
-    'locales/en.lua',
-    'client/main.lua',
+shared_scripts {
+    'config.lua',
+    'locales/locales.lua',
+    '@qb-core/import.lua'
 }
 
-shared_script 'config.lua'
-
-server_scripts {
-    'locales/en.lua',
-    'server/main.lua',
-}
+client_script 'client/main.lua'
+server_script 'server.lua'
 
 ui_page {
     'html/alerts.html',
