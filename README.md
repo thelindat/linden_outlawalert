@@ -1,3 +1,5 @@
+# Unmaintained, and not compatible with QBCore (it never has been)
+
 <p align="center"><img src="https://i.imgur.com/Ome5KDF.png"/><br>
 * Intended for use with [ESX] Hypaste RP’s Mobile Data Terminal by distritic, but it is not required *</p>
 <hr>
